@@ -29,7 +29,7 @@ COPY --from=builder /app/package.json ./package.json
 EXPOSE 3000
 
 # Environment variable for API
-ENV NEXT_PUBLIC_API_URL=http://localhost:3001/test/api
+ENV NEXT_PUBLIC_API_URL=http://13.234.217.37:3001/test/api
 
 # Start the Next.js app in production
 CMD ["npm", "run", "start"]

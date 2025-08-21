@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
 
 // Types
 export interface User {
