@@ -1,9 +1,23 @@
 {
-  "/services/category/[slug]/page": "app/services/category/[slug]/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/about/page": "app/about/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/customer-login/page": "app/customer-login/page.js",
+  "/page": "app/page.js",
+  "/register/page": "app/register/page.js",
   "/search/page": "app/search/page.js",
   "/services/[serviceId]/page": "app/services/[serviceId]/page.js",
-  "/customer-login/page": "app/customer-login/page.js",
   "/services/page": "app/services/page.js",
-  "/about/page": "app/about/page.js",
-  "/contact/page": "app/contact/page.js"
+  "/services/category/[slug]/page": "app/services/category/[slug]/page.js",
+  "/admin/bookings/page": "app/admin/bookings/page.js",
+  "/admin/categories/page": "app/admin/categories/page.js",
+  "/admin/messages/page": "app/admin/messages/page.js",
+  "/admin/data/page": "app/admin/data/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/reviews/page": "app/admin/reviews/page.js",
+  "/admin/search/page": "app/admin/search/page.js",
+  "/admin/services/page": "app/admin/services/page.js",
+  "/admin/settings/page": "app/admin/settings/page.js",
+  "/admin/users/page": "app/admin/users/page.js"
 }
