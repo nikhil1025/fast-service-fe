@@ -9,7 +9,7 @@ export default function DataManagementPage() {
   const handleSeedData = async (endpoint: string, name: string) => {
     setLoading(prev => ({ ...prev, [endpoint]: true }))
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/seed/${endpoint}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api"}/seed/${endpoint}`, {
         method: 'POST',
       })
       if (response.ok) {
