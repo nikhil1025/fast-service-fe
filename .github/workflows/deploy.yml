@@ -18,24 +18,20 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.EC2_KEY }}
 
-      - name: Deploy to EC2
+      - name: Copy files to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            # Navigate or create app folder
-            mkdir -p ~/nextjs-app
-            cd ~/nextjs-app
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "mkdir -p ~/nextjs-app"
+          rsync -avz --exclude '.git' ./ ubuntu@${{ secrets.EC2_HOST }}:~/nextjs-app/
 
-            # Pull latest code
-            if [ ! -d ".git" ]; then
-              git clone git@github.com:${GITHUB_REPOSITORY}.git .
-            else
-              git pull origin main
-            fi
-
-            # Create env file
-            echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" > .env
-
-            # Build & run docker
-            docker build -t nextjs-app .
-            docker rm -f nextjs-app || true
-            docker run -d --name nextjs-app -p 3000:3000 --env-file .env nextjs-app
+      - name: Build & Run Docker Container on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "
+            cd ~/nextjs-app &&
+            docker build -t nextjs-app . &&
+            docker stop nextjs-app || true &&
+            docker rm nextjs-app || true &&
+            docker run -d --name nextjs-app \
+              -p 3000:3000 \
+              -e NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+              nextjs-app
+          "
