@@ -1,0 +1,9 @@
+{
+  "/services/category/[slug]/page": "app/services/category/[slug]/page.js",
+  "/search/page": "app/search/page.js",
+  "/services/[serviceId]/page": "app/services/[serviceId]/page.js",
+  "/customer-login/page": "app/customer-login/page.js",
+  "/services/page": "app/services/page.js",
+  "/about/page": "app/about/page.js",
+  "/contact/page": "app/contact/page.js"
+}

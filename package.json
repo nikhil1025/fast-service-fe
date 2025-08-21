@@ -1,0 +1,31 @@
+{
+  "name": "fast-services-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.0.19",
+    "lucide-react": "^0.344.0",
+    "next": "~14.2.30",
+    "react": "^18.3.1",
+    "react-countup": "^6.5.0",
+    "react-dom": "^18.3.1",
+    "swiper": "^11.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8",
+    "eslint-config-next": "13.5.6",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5"
+  }
+}
