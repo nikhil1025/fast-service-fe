@@ -333,7 +333,7 @@ class ApiClient {
     serviceName: string;
     name: string;
     mobile: string;
-    email: string;
+    email?: string;
     address: string;
     date: string;
     message?: string;
