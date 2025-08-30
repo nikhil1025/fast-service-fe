@@ -12,7 +12,7 @@ export default function DataManagementPage() {
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_API_URL ||
-          "http://13.234.217.37:3001/test/api"
+          "http://localhost:3001/test/api"
         }/seed/${endpoint}`,
         {
           method: "POST",

@@ -44,11 +44,11 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="hero-section relative min-h-screen flex items-center">
+    <section className="hero-section relative min-h-[50vh] flex items-center">
       {/* Background Image with Overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ 
+        style={{
           backgroundImage: `url('https://images.pexels.com/photos/3747455/pexels-photo-3747455.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')`,
         }}
       >
@@ -60,7 +60,8 @@ const HeroSection: React.FC = () => {
           Book Top-Rated Home Services in Dubai
         </h1>
         <p className="text-white/90 text-lg md:text-xl max-w-3xl mx-auto mb-8">
-          Your One Stop Destination For Booking All Kinds of Home Services at low prices.
+          Your One Stop Destination For Booking All Kinds of Home Services at
+          low prices.
         </p>
 
         {/* Search Form */}
@@ -74,7 +75,7 @@ const HeroSection: React.FC = () => {
                 value={service}
                 onChange={(e) => setService(e.target.value)}
               />
-              
+
               {/* Search Suggestions Dropdown */}
               {suggestions.length > 0 && service.length >= 2 && (
                 <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-10 mt-1">
@@ -85,7 +86,7 @@ const HeroSection: React.FC = () => {
                       onClick={() => {
                         setService(suggestion);
                         // Clear suggestions after selection
-                        getSuggestions('');
+                        getSuggestions("");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
                     >
@@ -101,7 +102,6 @@ const HeroSection: React.FC = () => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
               >
-                <option value="">Choose City</option>
                 <option value="dubai">Dubai</option>
                 <option value="abudhabi">Abu Dhabi</option>
                 <option value="sharjah">Sharjah</option>
@@ -128,7 +128,7 @@ const HeroSection: React.FC = () => {
           <p className="text-white/80 mb-2">Top Searched Services:</p>
           <div className="flex flex-wrap justify-center gap-2">
             {popularSearches.map((searchTerm, index) => (
-              <button 
+              <button
                 key={index}
                 onClick={() => handlePopularSearchClick(searchTerm)}
                 className="px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-full text-sm transition duration-200"

@@ -240,10 +240,10 @@ const MovingServicesSection: React.FC = () => {
                 }}
                 breakpoints={{
                   640: {
-                    slidesPerView: 2,
+                    slidesPerView: 3,
                   },
                   1024: {
-                    slidesPerView: 3,
+                    slidesPerView: 4,
                   },
                 }}
                 className="px-4"
@@ -263,18 +263,27 @@ const MovingServicesSection: React.FC = () => {
                           <h3 className="text-xl font-semibold text-gray-800 mb-2">
                             {service.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                             {service.description}
-                          </p>
-                          <div className="flex items-center gap-2 mb-4">
-                            <div className="flex items-center text-yellow-400">
-                              <Star size={16} fill="currentColor" />
-                              <span className="ml-1 text-gray-800 font-medium">{service.rating}</span>
+                          </p> */}
+                          <div className="flex items-center justify-between w-full mb-4">
+                            {/* Left side: rating + reviews */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center text-yellow-400">
+                                <Star size={16} fill="currentColor" />
+                                <span className="ml-1 text-gray-800 font-medium">
+                                  {service.rating}
+                                </span>
+                              </div>
+                              <span className="text-gray-500">
+                                ({service.reviewCount} reviews)
+                              </span>
                             </div>
-                            <span className="text-gray-500">({service.reviewCount} reviews)</span>
-                          </div>
-                          <div className="text-lg font-bold text-primary mb-4">
-                            {service.price}
+
+                            {/* Right side: price */}
+                            <div className="text-lg font-bold text-primary">
+                              {service.price}
+                            </div>
                           </div>
                         </div>
                       </Link>

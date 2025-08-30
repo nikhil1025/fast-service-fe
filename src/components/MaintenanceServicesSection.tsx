@@ -59,8 +59,8 @@
 //           <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
 //             Maintenance Services
 //           </h2>
-//           <a 
-//             href="/services/maintenance" 
+//           <a
+//             href="/services/maintenance"
 //             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
 //           >
 //             View All
@@ -99,8 +99,8 @@
 //                 <SwiperSlide key={service.id}>
 //                   <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 h-full">
 //                     <div className="relative h-48">
-//                       <img 
-//                         src={service.image} 
+//                       <img
+//                         src={service.image}
 //                         alt={service.title}
 //                         className="w-full h-full object-cover rounded-t-lg"
 //                       />
@@ -119,7 +119,7 @@
 //                         </div>
 //                         <span className="text-gray-500">({service.reviews} reviews)</span>
 //                       </div>
-//                       <button 
+//                       <button
 //                         onClick={() => handleBookNow(service.title)}
 //                         className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200 flex items-center justify-center gap-2"
 //                       >
@@ -135,7 +135,7 @@
 //         </div>
 //       </div>
 
-//       <BookingModal 
+//       <BookingModal
 //         isOpen={isModalOpen}
 //         onClose={() => setIsModalOpen(false)}
 //         serviceName={selectedService}
@@ -145,32 +145,40 @@
 // };
 
 // export default MaintenanceServicesSection;
-'use client'
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link'
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import { Star, ArrowRight, ChevronLeft, ChevronRight, CalendarCheck } from 'lucide-react';
-import BookingModal from './BookingModal';
-import { useServices } from '@/hooks/useServices'
-import { useCategories } from '@/hooks/useCategories'
-import 'swiper/css';
-import 'swiper/css/navigation';
+import { useCategories } from "@/hooks/useCategories";
+import { useServices } from "@/hooks/useServices";
+import {
+  ArrowRight,
+  CalendarCheck,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+} from "lucide-react";
+import Link from "next/link";
+import React, { useMemo, useState } from "react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import BookingModal from "./BookingModal";
 
 const MaintenanceServicesSection: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState('');
+  const [selectedService, setSelectedService] = useState("");
 
-  const { categories } = useCategories()
-  
+  const { categories } = useCategories();
+
   // Memoize the maintenance category to prevent unnecessary re-renders
-  const maintenanceCategory = useMemo(() => 
-    categories.find(cat => cat.slug === 'maintenance'), 
+  const maintenanceCategory = useMemo(
+    () => categories.find((cat) => cat.slug === "maintenance"),
     [categories]
-  )
-  
-  const { services: maintenanceServices, loading } = useServices(maintenanceCategory?.id)
+  );
+
+  const { services: maintenanceServices, loading } = useServices(
+    maintenanceCategory?.id
+  );
 
   const handleBookNow = (serviceName: string) => {
     setSelectedService(serviceName);
@@ -179,7 +187,10 @@ const MaintenanceServicesSection: React.FC = () => {
 
   if (loading) {
     return (
-      <section id="maintenance-services" className="py-16 bg-gradient-to-b from-white to-primary/5">
+      <section
+        id="maintenance-services"
+        className="py-16 bg-gradient-to-b from-white to-primary/5"
+      >
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
@@ -188,7 +199,10 @@ const MaintenanceServicesSection: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-100 animate-pulse">
+              <div
+                key={i}
+                className="bg-white rounded-lg shadow-sm border border-gray-100 animate-pulse"
+              >
                 <div className="h-48 bg-gray-200 rounded-t-lg"></div>
                 <div className="p-6">
                   <div className="h-6 bg-gray-200 rounded mb-2"></div>
@@ -201,18 +215,25 @@ const MaintenanceServicesSection: React.FC = () => {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
-    <section id="maintenance-services" className="py-16 bg-gradient-to-b from-white to-primary/5">
+    <section
+      id="maintenance-services"
+      className="py-16 bg-gradient-to-b from-white to-primary/5"
+    >
       <div className="container-custom">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
             Maintenance Services
           </h2>
-          <Link 
-            href={maintenanceCategory ? `/services/category/${maintenanceCategory.slug}` : '/services'} 
+          <Link
+            href={
+              maintenanceCategory
+                ? `/services/category/${maintenanceCategory.slug}`
+                : "/services"
+            }
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
           >
             View All
@@ -235,15 +256,15 @@ const MaintenanceServicesSection: React.FC = () => {
                 spaceBetween={24}
                 slidesPerView={1}
                 navigation={{
-                  prevEl: '.maintenance-swiper-prev',
-                  nextEl: '.maintenance-swiper-next',
+                  prevEl: ".maintenance-swiper-prev",
+                  nextEl: ".maintenance-swiper-next",
                 }}
                 breakpoints={{
                   640: {
-                    slidesPerView: 2,
+                    slidesPerView: 3,
                   },
                   1024: {
-                    slidesPerView: 3,
+                    slidesPerView: 4,
                   },
                 }}
                 className="px-4"
@@ -253,8 +274,8 @@ const MaintenanceServicesSection: React.FC = () => {
                     <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 h-full">
                       <Link href={`/services/${service.id}`} className="block">
                         <div className="relative h-48">
-                          <img 
-                            src={service.image} 
+                          <img
+                            src={service.image}
                             alt={service.title}
                             className="w-full h-full object-cover rounded-t-lg"
                           />
@@ -263,23 +284,32 @@ const MaintenanceServicesSection: React.FC = () => {
                           <h3 className="text-xl font-semibold text-gray-800 mb-2">
                             {service.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                             {service.description}
-                          </p>
-                          <div className="flex items-center gap-2 mb-4">
-                            <div className="flex items-center text-yellow-400">
-                              <Star size={16} fill="currentColor" />
-                              <span className="ml-1 text-gray-800 font-medium">{service.rating}</span>
+                          </p> */}
+                          <div className="flex items-center justify-between w-full mb-4">
+                            {/* Left side: rating + reviews */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center text-yellow-400">
+                                <Star size={16} fill="currentColor" />
+                                <span className="ml-1 text-gray-800 font-medium">
+                                  {service.rating}
+                                </span>
+                              </div>
+                              <span className="text-gray-500">
+                                ({service.reviewCount} reviews)
+                              </span>
                             </div>
-                            <span className="text-gray-500">({service.reviewCount} reviews)</span>
-                          </div>
-                          <div className="text-lg font-bold text-primary mb-4">
-                            {service.price}
+
+                            {/* Right side: price */}
+                            <div className="text-lg font-bold text-primary">
+                              {service.price}
+                            </div>
                           </div>
                         </div>
                       </Link>
                       <div className="px-6 pb-6">
-                        <button 
+                        <button
                           onClick={() => handleBookNow(service.title)}
                           className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200 flex items-center justify-center gap-2"
                         >
@@ -295,12 +325,14 @@ const MaintenanceServicesSection: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600">No maintenance services available at the moment.</p>
+            <p className="text-gray-600">
+              No maintenance services available at the moment.
+            </p>
           </div>
         )}
       </div>
 
-      <BookingModal 
+      <BookingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceName={selectedService}

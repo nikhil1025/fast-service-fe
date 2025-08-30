@@ -16,11 +16,11 @@ export default function HomePage() {
       <HeroSection />
       <StatsSection />
       <CategoriesSection />
-      <BannerSection />
+      {/* <BannerSection /> */}
       <CleaningServicesSection />
-      <MovingBannerSection />
+      {/* <MovingBannerSection /> */}
       <MovingServicesSection />
-      <MaintenanceBannerSection />
+      {/* <MaintenanceBannerSection /> */}
       <MaintenanceServicesSection />
       <TestimonialsSection />
       <CallToActionSection />

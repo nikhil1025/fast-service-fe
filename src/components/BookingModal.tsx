@@ -13,6 +13,7 @@ interface BookingModalProps {
 interface FormData {
   name: string;
   mobile: string;
+  email: string;
   address: string;
   date: string;
   message: string;
@@ -22,6 +23,7 @@ interface FormErrors {
   name?: string;
   mobile?: string;
   address?: string;
+  email?: string;  
   date?: string;
 }
 
@@ -30,6 +32,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
     name: '',
     mobile: '',
     address: '',
+    email: '', 
     date: '',
     message: ''
   });
@@ -45,24 +48,33 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
 
     // Name validation
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = "Name is required";
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = "Name must be at least 2 characters";
     }
 
     // Mobile validation
-    const mobileRegex = /^(?:\+971|00971|0)?(?:50|51|52|55|56|58|2|3|4|6|7|9)\d{7}$/;
+    const mobileRegex =
+      /^(?:\+971|00971|0)?(?:50|51|52|55|56|58|2|3|4|6|7|9)\d{7}$/;
     if (!formData.mobile.trim()) {
-      newErrors.mobile = 'Mobile number is required';
+      newErrors.mobile = "Mobile number is required";
     } else if (!mobileRegex.test(formData.mobile.trim())) {
-      newErrors.mobile = 'Please enter a valid UAE mobile number';
+      newErrors.mobile = "Please enter a valid UAE mobile number";
     }
 
     // Address validation
     if (!formData.address.trim()) {
-      newErrors.address = 'Address is required';
+      newErrors.address = "Address is required";
     } else if (formData.address.trim().length < 10) {
-      newErrors.address = 'Please enter a complete address';
+      newErrors.address = "Please enter a complete address";
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Date validation
@@ -71,9 +83,9 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
     today.setHours(0, 0, 0, 0);
 
     if (!formData.date) {
-      newErrors.date = 'Date is required';
+      newErrors.date = "Date is required";
     } else if (selectedDate < today) {
-      newErrors.date = 'Please select a future date';
+      newErrors.date = "Please select a future date";
     }
 
     setErrors(newErrors);
@@ -101,6 +113,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
         serviceName,
         name: formData.name,
         mobile: formData.mobile,
+        email: formData.email,
         address: formData.address,
         date: formData.date,
         message: formData.message || undefined,
@@ -114,6 +127,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
           name: '',
           mobile: '',
           address: '',
+          email: '', 
           date: '',
           message: ''
         });
@@ -165,14 +179,17 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
 
   return (
     <>
-      <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+      <div
+        className="fixed inset-0  backdrop-blur-sm z-50"
         onClick={handleClose}
       />
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg shadow-xl z-50 p-6">
+      <div
+        className="fixed right-0 top-0 h-full w-[400px] bg-white shadow-2xl z-50 
+             border-l border-gray-200 animate-slideIn overflow-y-auto p-6"
+      >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">Book Now</h2>
-          <button 
+          <button
             onClick={handleClose}
             disabled={isSubmitting}
             className="text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50"
@@ -185,7 +202,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Name
             </label>
             <input
@@ -195,7 +215,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
               onChange={handleChange}
               disabled={isSubmitting}
               className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
+                errors.name ? "border-red-500" : "border-gray-300"
               }`}
             />
             {errors.name && (
@@ -204,7 +224,33 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
           </div>
 
           <div>
-            <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isSubmitting}
+              placeholder="example@email.com"
+              className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="mobile"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Mobile Number
             </label>
             <input
@@ -215,7 +261,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
               disabled={isSubmitting}
               placeholder="+971 XX XXX XXXX"
               className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 ${
-                errors.mobile ? 'border-red-500' : 'border-gray-300'
+                errors.mobile ? "border-red-500" : "border-gray-300"
               }`}
             />
             {errors.mobile && (
@@ -224,7 +270,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
           </div>
 
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Address
             </label>
             <textarea
@@ -234,7 +283,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
               disabled={isSubmitting}
               rows={2}
               className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 ${
-                errors.address ? 'border-red-500' : 'border-gray-300'
+                errors.address ? "border-red-500" : "border-gray-300"
               }`}
             />
             {errors.address && (
@@ -243,7 +292,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
           </div>
 
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="date"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Preferred Date
             </label>
             <div className="relative">
@@ -253,16 +305,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
                 value={formData.date}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                min={new Date().toISOString().split('T')[0]}
+                min={new Date().toISOString().split("T")[0]}
                 className={`w-full px-4 py-2 pr-10 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none disabled:opacity-50 ${
-                  errors.date ? 'border-red-500' : 'border-gray-300'
+                  errors.date ? "border-red-500" : "border-gray-300"
                 }`}
                 style={{
-                  colorScheme: 'light'
+                  colorScheme: "light",
                 }}
               />
-              <Calendar 
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" 
+              <Calendar
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                 size={18}
               />
             </div>
@@ -272,7 +324,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Message (Optional)
             </label>
             <textarea
@@ -290,7 +345,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             disabled={isSubmitting}
             className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Booking'}
+            {isSubmitting ? "Submitting..." : "Submit Booking"}
           </button>
         </form>
       </div>

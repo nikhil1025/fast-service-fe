@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
 import { 
   Phone, 
   Mail, 
@@ -12,6 +15,13 @@ import {
 } from 'lucide-react'
 
 export default function FooterSection() {
+
+  const {user, isAuthenticated} = useAuth();
+
+  if(user && isAuthenticated) {
+    return <></>;
+  }
+  
   return (
     <footer className="bg-primary-dark text-white/80">
       {/* Main Footer */}

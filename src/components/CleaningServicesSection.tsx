@@ -219,14 +219,21 @@ export default function CleaningServicesSection() {
   }
 
   return (
-    <section id="cleaning-services" className="py-16 bg-gradient-to-b from-white to-primary/5">
+    <section
+      id="cleaning-services"
+      className="py-16 bg-gradient-to-b from-white to-primary/5"
+    >
       <div className="container-custom">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
             Cleaning Services
           </h2>
-          <Link 
-            href={cleaningCategory ? `/services/category/${cleaningCategory.slug}` : '/services'} 
+          <Link
+            href={
+              cleaningCategory
+                ? `/services/category/${cleaningCategory.slug}`
+                : "/services"
+            }
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
           >
             View All
@@ -249,15 +256,15 @@ export default function CleaningServicesSection() {
                 spaceBetween={24}
                 slidesPerView={1}
                 navigation={{
-                  prevEl: '.cleaning-swiper-prev',
-                  nextEl: '.cleaning-swiper-next',
+                  prevEl: ".cleaning-swiper-prev",
+                  nextEl: ".cleaning-swiper-next",
                 }}
                 breakpoints={{
                   640: {
-                    slidesPerView: 2,
+                    slidesPerView: 3,
                   },
                   1024: {
-                    slidesPerView: 3,
+                    slidesPerView: 4 ,
                   },
                 }}
                 className="px-4"
@@ -267,8 +274,8 @@ export default function CleaningServicesSection() {
                     <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 h-full">
                       <Link href={`/services/${service.id}`} className="block">
                         <div className="relative h-48">
-                          <img 
-                            src={service.image} 
+                          <img
+                            src={service.image}
                             alt={service.title}
                             className="w-full h-full object-cover rounded-t-lg"
                           />
@@ -277,23 +284,32 @@ export default function CleaningServicesSection() {
                           <h3 className="text-xl font-semibold text-gray-800 mb-2">
                             {service.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                             {service.description}
-                          </p>
-                          <div className="flex items-center gap-2 mb-4">
-                            <div className="flex items-center text-yellow-400">
-                              <Star size={16} fill="currentColor" />
-                              <span className="ml-1 text-gray-800 font-medium">{service.rating}</span>
+                          </p> */}
+                          <div className="flex items-center justify-between w-full mb-4">
+                            {/* Left side: rating + reviews */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center text-yellow-400">
+                                <Star size={16} fill="currentColor" />
+                                <span className="ml-1 text-gray-800 font-medium">
+                                  {service.rating}
+                                </span>
+                              </div>
+                              <span className="text-gray-500">
+                                ({service.reviewCount} reviews)
+                              </span>
                             </div>
-                            <span className="text-gray-500">({service.reviewCount} reviews)</span>
-                          </div>
-                          <div className="text-lg font-bold text-primary mb-4">
-                            {service.price}
+
+                            {/* Right side: price */}
+                            <div className="text-lg font-bold text-primary">
+                              {service.price}
+                            </div>
                           </div>
                         </div>
                       </Link>
                       <div className="px-6 pb-6">
-                        <button 
+                        <button
                           onClick={() => handleBookNow(service.title)}
                           className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200 flex items-center justify-center gap-2"
                         >
@@ -309,16 +325,18 @@ export default function CleaningServicesSection() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600">No cleaning services available at the moment.</p>
+            <p className="text-gray-600">
+              No cleaning services available at the moment.
+            </p>
           </div>
         )}
       </div>
 
-      <BookingModal 
+      <BookingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceName={selectedService}
       />
     </section>
-  )
+  );
 }

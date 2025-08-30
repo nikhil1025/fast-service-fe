@@ -104,14 +104,20 @@ export default function CategoryPage({ params }: CategoryPageProps) {
         {/* Header */}
         <div className="mb-8">
           <nav className="text-sm text-gray-600 mb-4">
-            <Link href="/" className="hover:text-primary">Home</Link>
+            <Link href="/" className="hover:text-primary">
+              Home
+            </Link>
             <span className="mx-2">/</span>
-            <Link href="/services" className="hover:text-primary">Services</Link>
+            <Link href="/services" className="hover:text-primary">
+              Services
+            </Link>
             <span className="mx-2">/</span>
             <span className="text-gray-900">{category.name}</span>
           </nav>
-          
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">{category.name}</h1>
+
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+            {category.name}
+          </h1>
           {category.description && (
             <p className="text-gray-600 text-lg">{category.description}</p>
           )}
@@ -122,7 +128,10 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search services..."
@@ -143,20 +152,31 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 <option value="rating">Sort by Rating</option>
                 <option value="price">Sort by Price</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                size={16}
+              />
             </div>
 
             {/* View Mode */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'}`}
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-md ${
+                  viewMode === "grid"
+                    ? "bg-primary text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
               >
                 <Grid size={20} />
               </button>
               <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'}`}
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-md ${
+                  viewMode === "list"
+                    ? "bg-primary text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
               >
                 <List size={20} />
               </button>
@@ -173,38 +193,69 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
         {/* Services Grid/List */}
         {filteredServices.length > 0 ? (
-          <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                : "space-y-6"
+            }
+          >
             {filteredServices.map((service) => (
-              <div key={service.id} className={`bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 ${viewMode === 'list' ? 'flex gap-6' : ''}`}>
-                <Link href={`/services/${service.id}`} className={`block ${viewMode === 'list' ? 'flex-shrink-0' : ''}`}>
-                  <div className={`relative ${viewMode === 'list' ? 'w-48 h-32' : 'h-48'}`}>
-                    <img 
-                      src={service.image} 
+              <div
+                key={service.id}
+                className={`bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 ${
+                  viewMode === "list" ? "flex gap-6" : ""
+                }`}
+              >
+                <Link
+                  href={`/services/${service.id}`}
+                  className={`block ${
+                    viewMode === "list" ? "flex-shrink-0" : ""
+                  }`}
+                >
+                  <div
+                    className={`relative ${
+                      viewMode === "list" ? "w-48 h-32" : "h-48"
+                    }`}
+                  >
+                    <img
+                      src={service.image}
                       alt={service.title}
-                      className={`w-full h-full object-cover ${viewMode === 'list' ? 'rounded-l-lg' : 'rounded-t-lg'}`}
+                      className={`w-full h-full object-cover ${
+                        viewMode === "list" ? "rounded-l-lg" : "rounded-t-lg"
+                      }`}
                     />
                   </div>
                 </Link>
-                <div className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
+                <div className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}>
                   <Link href={`/services/${service.id}`}>
                     <h3 className="text-xl font-semibold text-gray-800 mb-2 hover:text-primary transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {service.description}
-                    </p>
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="flex items-center text-yellow-400">
-                        <Star size={16} fill="currentColor" />
-                        <span className="ml-1 text-gray-800 font-medium">{service.rating}</span>
+                    </p> */}
+                    <div className="flex items-center justify-between w-full mb-4">
+                      {/* Left side: rating + reviews */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center text-yellow-400">
+                          <Star size={16} fill="currentColor" />
+                          <span className="ml-1 text-gray-800 font-medium">
+                            {service.rating}
+                          </span>
+                        </div>
+                        <span className="text-gray-500">
+                          ({service.reviewCount} reviews)
+                        </span>
                       </div>
-                      <span className="text-gray-500">({service.reviewCount} reviews)</span>
-                    </div>
-                    <div className="text-lg font-bold text-primary mb-4">
-                      {service.price}
+
+                      {/* Right side: price */}
+                      <div className="text-lg font-bold text-primary">
+                        {service.price}
+                      </div>
                     </div>
                   </Link>
-                  <button 
+                  <button
                     onClick={() => handleBookNow(service.title)}
                     className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200"
                   >
@@ -216,17 +267,21 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           </div>
         ) : (
           <div className="text-center py-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No services found</h3>
-            <p className="text-gray-600">No services are available in this category at the moment.</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              No services found
+            </h3>
+            <p className="text-gray-600">
+              No services are available in this category at the moment.
+            </p>
           </div>
         )}
       </div>
 
-      <BookingModal 
+      <BookingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceName={selectedService}
       />
     </div>
-  )
+  );
 }
