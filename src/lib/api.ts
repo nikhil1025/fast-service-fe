@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
 
 // Types
 export interface User {
@@ -118,22 +118,22 @@ class ApiClient {
   constructor(baseURL: string) {
     this.baseURL = baseURL;
     // Get token from localStorage if available
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('auth_token');
+    if (typeof window !== "undefined") {
+      this.token = localStorage.getItem("auth_token");
     }
   }
 
   setToken(token: string) {
     this.token = token;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('auth_token', token);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("auth_token", token);
     }
   }
 
   removeToken() {
     this.token = null;
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_token");
     }
   }
 
@@ -143,7 +143,7 @@ class ApiClient {
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
     };
 
@@ -157,7 +157,9 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'An error occurred' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: "An error occurred" }));
       throw new Error(error.message || `HTTP ${response.status}`);
     }
 
@@ -170,52 +172,71 @@ class ApiClient {
     password: string;
     name: string;
     phone: string;
-    role?: 'user' | 'admin';
+    role?: "user" | "admin";
   }): Promise<AuthResponse> {
-    return this.request<AuthResponse>('/auth/register', {
-      method: 'POST',
+    return this.request<AuthResponse>("/auth/register", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async login(data: { email: string; password: string }): Promise<AuthResponse> {
-    return this.request<AuthResponse>('/auth/login', {
-      method: 'POST',
+  async login(data: {
+    email: string;
+    password: string;
+  }): Promise<AuthResponse> {
+    return this.request<AuthResponse>("/auth/login", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async getProfile(): Promise<User> {
-    return this.request<User>('/auth/profile', {
-      method: 'POST',
+    return this.request<User>("/auth/profile", {
+      method: "POST",
     });
   }
 
   // Users endpoints
-  async getUsers(): Promise<User[]> {
-    return this.request<User[]>('/users');
+  // api.ts
+  async getUsers(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    role?: string
+  ) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (search) params.append("search", search);
+    if (role && role !== "all") params.append("role", role);
+
+    return this.request<{ data: User[]; total: number }>(
+      "/users?" + params.toString()
+    );
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User> {
     return this.request<User>(`/users/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   }
 
   async deleteUser(id: string): Promise<void> {
     return this.request<void>(`/users/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   // Categories endpoints
   async getCategories(): Promise<Category[]> {
-    return this.request<Category[]>('/categories');
+    return this.request<Category[]>("/categories");
   }
 
   async getCategoriesHierarchy(): Promise<Category[]> {
-    return this.request<Category[]>('/categories/hierarchy');
+    return this.request<Category[]>("/categories/hierarchy");
   }
 
   async getCategoryBySlug(slug: string): Promise<Category> {
@@ -231,49 +252,52 @@ class ApiClient {
     parentId?: string;
     isActive?: boolean;
   }): Promise<Category> {
-    return this.request<Category>('/categories', {
-      method: 'POST',
+    return this.request<Category>("/categories", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async updateCategory(id: string, data: {
-    name?: string;
-    slug?: string;
-    description?: string;
-    icon?: string;
-    image?: string;
-    parentId?: string;
-    isActive?: boolean;
-  }): Promise<Category> {
+  async updateCategory(
+    id: string,
+    data: {
+      name?: string;
+      slug?: string;
+      description?: string;
+      icon?: string;
+      image?: string;
+      parentId?: string;
+      isActive?: boolean;
+    }
+  ): Promise<Category> {
     return this.request<Category>(`/categories/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   }
 
   async deleteCategory(id: string): Promise<void> {
     return this.request<void>(`/categories/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async seedCategories(): Promise<{ message: string }> {
-    return this.request<{ message: string }>('/categories/seed');
+    return this.request<{ message: string }>("/categories/seed");
   }
 
   // Services endpoints
   async getServices(categoryId?: string): Promise<Service[]> {
-    const params = categoryId ? `?categoryId=${categoryId}` : '';
+    const params = categoryId ? `?categoryId=${categoryId}` : "";
     return this.request<Service[]>(`/services${params}`);
   }
 
   async getFeaturedServices(): Promise<Service[]> {
-    return this.request<Service[]>('/services/featured');
+    return this.request<Service[]>("/services/featured");
   }
 
   async getPopularServices(): Promise<Service[]> {
-    return this.request<Service[]>('/services/popular');
+    return this.request<Service[]>("/services/popular");
   }
 
   async getServicesByCategory(slug: string): Promise<Service[]> {
@@ -295,37 +319,40 @@ class ApiClient {
     isActive?: boolean;
     sortOrder?: number;
   }): Promise<Service> {
-    return this.request<Service>('/services', {
-      method: 'POST',
+    return this.request<Service>("/services", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async updateService(id: string, data: {
-    title?: string;
-    categoryId?: string;
-    description?: string;
-    image?: string;
-    price?: string;
-    duration?: string;
-    features?: string[];
-    isActive?: boolean;
-    sortOrder?: number;
-  }): Promise<Service> {
+  async updateService(
+    id: string,
+    data: {
+      title?: string;
+      categoryId?: string;
+      description?: string;
+      image?: string;
+      price?: string;
+      duration?: string;
+      features?: string[];
+      isActive?: boolean;
+      sortOrder?: number;
+    }
+  ): Promise<Service> {
     return this.request<Service>(`/services/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   }
 
   async deleteService(id: string): Promise<void> {
     return this.request<void>(`/services/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async seedServices(): Promise<{ message: string }> {
-    return this.request<{ message: string }>('/services/seed');
+    return this.request<{ message: string }>("/services/seed");
   }
 
   // Bookings endpoints
@@ -338,18 +365,18 @@ class ApiClient {
     date: string;
     message?: string;
   }): Promise<Booking> {
-    return this.request<Booking>('/bookings', {
-      method: 'POST',
+    return this.request<Booking>("/bookings", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async getBookings(): Promise<Booking[]> {
-    return this.request<Booking[]>('/bookings');
+    return this.request<Booking[]>("/bookings");
   }
 
   async getAllBookings(): Promise<Booking[]> {
-    return this.request<Booking[]>('/bookings?all=true');
+    return this.request<Booking[]>("/bookings?all=true");
   }
 
   async getBooking(id: string): Promise<Booking> {
@@ -358,26 +385,26 @@ class ApiClient {
 
   async updateBookingStatus(id: string, status: string): Promise<Booking> {
     return this.request<Booking>(`/bookings/${id}/status`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ status }),
     });
   }
 
   async deleteBooking(id: string): Promise<void> {
     return this.request<void>(`/bookings/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   // Reviews endpoints
   async getReviews(serviceId?: string): Promise<Review[]> {
-    const params = serviceId ? `?serviceId=${serviceId}` : '';
+    const params = serviceId ? `?serviceId=${serviceId}` : "";
     return this.request<Review[]>(`/reviews${params}`);
   }
 
   async deleteReview(id: string): Promise<void> {
     return this.request<void>(`/reviews/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
@@ -389,35 +416,35 @@ class ApiClient {
     subject: string;
     message: string;
   }): Promise<Contact> {
-    return this.request<Contact>('/contact', {
-      method: 'POST',
+    return this.request<Contact>("/contact", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async getContacts(): Promise<Contact[]> {
-    return this.request<Contact[]>('/contact');
+    return this.request<Contact[]>("/contact");
   }
 
   async markContactAsRead(id: string): Promise<Contact> {
     return this.request<Contact>(`/contact/${id}/read`, {
-      method: 'PATCH',
+      method: "PATCH",
     });
   }
 
   async deleteContact(id: string): Promise<void> {
     return this.request<void>(`/contact/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   // Dashboard endpoints
   async getDashboardStats(): Promise<any> {
-    return this.request('/dashboard/stats');
+    return this.request("/dashboard/stats");
   }
 
   async getDashboardActivity(): Promise<any> {
-    return this.request('/dashboard/activity');
+    return this.request("/dashboard/activity");
   }
 
   // Search endpoints
@@ -437,20 +464,22 @@ class ApiClient {
         searchParams.append(key, value.toString());
       }
     });
-    
+
     return this.request<SearchResult>(`/search?${searchParams.toString()}`);
   }
 
   async getSearchFilters(): Promise<any> {
-    return this.request('/search/filters');
+    return this.request("/search/filters");
   }
 
-  async getSearchSuggestions(query: string): Promise<{ suggestions: string[] }> {
+  async getSearchSuggestions(
+    query: string
+  ): Promise<{ suggestions: string[] }> {
     return this.request(`/search/suggestions?q=${encodeURIComponent(query)}`);
   }
 
   async getPopularSearches(): Promise<{ popularSearches: string[] }> {
-    return this.request('/search/popular');
+    return this.request("/search/popular");
   }
 }
 

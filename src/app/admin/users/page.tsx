@@ -16,6 +16,26 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
 
+
+  const [count, setCount] = useState(5);
+
+  // update count without changing state's states
+  useEffect(()=>{
+    setCount(7);
+  }, [count]);
+
+
+  // const [users, setUsers] = useState<User[]>([]);
+  // const [loading, setLoading] = useState(true);
+  // const [searchTerm, setSearchTerm] = useState("");
+  // const [filterRole, setFilterRole] = useState<string>("all");
+
+  // // NEW
+  // const [page, setPage] = useState(1);
+  // const [limit] = useState(10); // items per page
+  // const [total, setTotal] = useState(0);
+
+
   useEffect(() => {
     fetchUsers()
   }, [])
@@ -31,6 +51,19 @@ export default function UsersPage() {
       setLoading(false)
     }
   }
+  // const fetchUsers = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await api.getUsers(page, limit); // now expects pagination
+  //     setUsers(res.data);
+  //     setTotal(res.total);
+  //   } catch (error) {
+  //     console.error("Failed to fetch users:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
 
   const handleAddUser = () => {
     setSelectedUser(null)
@@ -68,6 +101,14 @@ export default function UsersPage() {
     return matchesSearch && matchesRole
   })
 
+//   const filteredUsers = users && users.filter(user => {
+//   const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//                         user.email.toLowerCase().includes(searchTerm.toLowerCase())
+//   const matchesRole = filterRole === 'all' || user.role === filterRole
+//   return matchesSearch && matchesRole
+// })
+
+
   if (loading) {
     return (
       <div className="animate-pulse">
@@ -101,7 +142,7 @@ export default function UsersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Users</h1>
-        <button 
+        <button
           onClick={handleAddUser}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
         >
@@ -115,7 +156,10 @@ export default function UsersPage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search users..."
@@ -159,7 +203,7 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
+              {filteredUsers && filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -169,27 +213,35 @@ export default function UsersPage() {
                         </span>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {user.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {user.email}
+                        </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      user.role === 'admin' 
-                        ? 'bg-purple-100 text-purple-800' 
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                        user.role === "admin"
+                          ? "bg-purple-100 text-purple-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
                       {user.role}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      user.isActive 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {user.isActive ? 'Active' : 'Inactive'}
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                        user.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {user.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -197,13 +249,13 @@ export default function UsersPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
-                      <button 
+                      <button
                         onClick={() => handleEditUser(user)}
                         className="text-gray-600 hover:text-primary"
                       >
                         <Edit size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDeleteUser(user)}
                         className="text-gray-600 hover:text-red-600"
                       >
@@ -217,9 +269,33 @@ export default function UsersPage() {
           </table>
         </div>
 
-        {filteredUsers.length === 0 && (
+        {filteredUsers && filteredUsers.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No users found</p>
+          </div>
+        )}
+        {total > limit && (
+          <div className="flex items-center justify-between p-4 border-t border-gray-200">
+            <p className="text-sm text-gray-600">
+              Showing {(page - 1) * limit + 1}–{Math.min(page * limit, total)}{" "}
+              of {total} users
+            </p>
+            <div className="flex gap-2">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="px-3 py-1 border rounded-md text-sm disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                disabled={page * limit >= total}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-3 py-1 border rounded-md text-sm disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -243,5 +319,5 @@ export default function UsersPage() {
         itemName={selectedUser?.name}
       />
     </div>
-  )
+  );
 }
