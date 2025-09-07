@@ -50,7 +50,7 @@ export function useCategoriesHierarchy() {
         setLoading(true);
         hasFetched.current = true;
         const data = await api.getCategoriesHierarchy();
-        setCategories(data);
+        setCategories(data.data);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch categories');
