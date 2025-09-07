@@ -221,11 +221,12 @@ const MaintenanceServicesSection: React.FC = () => {
   return (
     <section
       id="maintenance-services"
-      className="py-16 bg-gradient-to-b from-white to-primary/5"
+      className="py-12 sm:py-16 bg-gradient-to-b from-white to-primary/5"
     >
       <div className="container-custom">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+        {/* Header */}
+        <div className="flex flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">
             Maintenance Services
           </h2>
           <Link
@@ -234,7 +235,7 @@ const MaintenanceServicesSection: React.FC = () => {
                 ? `/services/category/${maintenanceCategory.slug}`
                 : "/services"
             }
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
           >
             View All
             <ArrowRight size={18} />
@@ -243,80 +244,65 @@ const MaintenanceServicesSection: React.FC = () => {
 
         {maintenanceServices.length > 0 ? (
           <div className="relative group">
-            <button className="maintenance-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-10 h-10 bg-white backdrop-blur rounded-full shadow-lg flex items-center justify-center text-gray-800 hover:text-primary hover:bg-primary hover:text-white transition-all duration-200 opacity-0 group-hover:opacity-100">
-              <ChevronLeft size={20} />
-            </button>
-            <button className="maintenance-swiper-next absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 w-10 h-10 bg-white backdrop-blur rounded-full shadow-lg flex items-center justify-center text-gray-800 hover:text-primary hover:bg-primary hover:text-white transition-all duration-200 opacity-0 group-hover:opacity-100">
-              <ChevronRight size={20} />
+            {/* Prev Button */}
+            <button className="maintenance-swiper-prev absolute left-1 sm:left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 bg-white backdrop-blur rounded-full shadow-lg flex items-center justify-center text-gray-800 hover:text-white hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100">
+              <ChevronLeft size={18} className="sm:size-20" />
             </button>
 
-            <div className="overflow-hidden mx-6">
+            {/* Next Button */}
+            <button className="maintenance-swiper-next absolute right-1 sm:right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 bg-white backdrop-blur rounded-full shadow-lg flex items-center justify-center text-gray-800 hover:text-white hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100">
+              <ChevronRight size={18} className="sm:size-20" />
+            </button>
+
+            {/* Swiper */}
+            <div className="overflow-hidden mx-4 sm:mx-6">
               <Swiper
                 modules={[Navigation]}
-                spaceBetween={24}
-                slidesPerView={1}
+                spaceBetween={16}
+                slidesPerView={2} // default: show 2 tiles on small
                 navigation={{
-                  prevEl: ".maintenance-swiper-prev",
-                  nextEl: ".maintenance-swiper-next",
+                  prevEl: ".moving-swiper-prev",
+                  nextEl: ".moving-swiper-next",
                 }}
                 breakpoints={{
                   640: {
-                    slidesPerView: 3,
+                    slidesPerView: 2, // mobile → 2
+                  },
+                  768: {
+                    slidesPerView: 3, // tablet → 3
                   },
                   1024: {
-                    slidesPerView: 4,
+                    slidesPerView: 4, // desktop → 4
                   },
                 }}
-                className="px-4"
+                className="px-2 sm:px-4"
               >
                 {maintenanceServices.map((service) => (
                   <SwiperSlide key={service.id}>
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 h-full">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 h-full flex flex-col">
                       <Link href={`/services/${service.id}`} className="block">
-                        <div className="relative h-48">
+                        <div className="relative h-40 sm:h-48 md:h-52">
                           <img
                             src={service.image}
                             alt={service.title}
                             className="w-full h-full object-cover rounded-t-lg"
                           />
                         </div>
-                        <div className="p-6">
-                          <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                        <div className="p-4 sm:p-6 flex-1">
+                          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 line-clamp-1">
                             {service.title}
                           </h3>
-                          {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                            {service.description}
-                          </p> */}
-                          <div className="flex items-center justify-between w-full mb-4">
-                            {/* Left side: rating + reviews */}
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center text-yellow-400">
-                                <Star size={16} fill="currentColor" />
-                                <span className="ml-1 text-gray-800 font-medium">
-                                  {service.rating}
-                                </span>
-                              </div>
-                              <span className="text-gray-500">
-                                ({service.reviewCount} reviews)
-                              </span>
-                            </div>
-
-                            {/* Right side: price */}
-                            <div className="text-lg font-bold text-primary">
-                              {service.price}
-                            </div>
-                          </div>
                         </div>
                       </Link>
-                      <div className="px-6 pb-6">
+                      {/* <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                         <button
                           onClick={() => handleBookNow(service.title)}
-                          className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200 flex items-center justify-center gap-2"
+                          className="w-full bg-primary text-white py-2 sm:py-2.5 rounded-md hover:bg-primary/90 transition duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
                         >
-                          <CalendarCheck size={18} />
+                          <CalendarCheck size={16} className="sm:size-18" />
                           Book Now
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </SwiperSlide>
                 ))}
@@ -325,7 +311,7 @@ const MaintenanceServicesSection: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               No maintenance services available at the moment.
             </p>
           </div>

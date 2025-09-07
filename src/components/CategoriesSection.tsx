@@ -63,34 +63,37 @@ const CategoriesSection: React.FC = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-white to-primary/5">
       <div className="container-custom">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 text-center sm:text-left">
             Browse By Category
           </h2>
-          <a 
-            href="/categories" 
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
+          <a
+            href="/categories"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200 w-full sm:w-auto"
           >
             View All
             <ArrowRight size={18} />
           </a>
         </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {parentCategories.map((category) => {
-            const IconComponent = iconMap[category.icon || 'Sparkles'] || Sparkles;
-            
+            const IconComponent =
+              iconMap[category.icon || "Sparkles"] || Sparkles;
+
             return (
               <button
                 key={category.id}
                 onClick={() => handleCategoryClick(category.slug)}
-                className="group flex items-center p-4 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-100 hover:border-primary/20 hover:bg-white transition-all duration-300 shadow-sm"
+                className="group flex items-center p-3 sm:p-4 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-100 hover:border-primary/20 hover:bg-white transition-all duration-300 shadow-sm w-full"
               >
-                <IconComponent 
-                  size={24} 
-                  className="text-primary group-hover:scale-110 transition-transform duration-300" 
+                <IconComponent
+                  size={22}
+                  className="text-primary group-hover:scale-110 transition-transform duration-300"
                 />
-                <span className="text-gray-800 font-medium ml-3">
+                <span className="text-gray-800 font-medium ml-2 sm:ml-3 truncate">
                   {category.name}
                 </span>
               </button>

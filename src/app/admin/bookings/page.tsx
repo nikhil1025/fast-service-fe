@@ -6,6 +6,7 @@ import { api, Booking } from '@/lib/api'
 import BookingModal from '@/components/admin/modals/BookingModal'
 import BookingDetailModal from '@/components/admin/modals/BookingDetailModal'
 import DeleteConfirmModal from '@/components/admin/modals/DeleteConfirmModal'
+import Pagination from "@/components/Pagination";
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
@@ -18,15 +19,24 @@ export default function BookingsPage() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
 
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [total, setTotal] = useState(0);
+
+     useEffect(() => {
+    fetchBookings(page)
+  }, [page])
+
   useEffect(() => {
     fetchBookings()
   }, [])
 
-  const fetchBookings = async () => {
+   const fetchBookings = async (currentPage = 1) => {
     try {
       setLoading(true)
-      const data = await api.getAllBookings()
-      setBookings(data)
+      const data = await api.getAllBookings(currentPage, limit)
+      setBookings(data.data)
+      setTotal(data.total)
     } catch (error) {
       console.error('Failed to fetch bookings:', error)
     } finally {
@@ -78,7 +88,7 @@ export default function BookingsPage() {
     }
   }
 
-  const filteredBookings = bookings.filter(booking => {
+    const filteredBookings = bookings.filter(booking => {
     const matchesSearch = booking.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          booking.mobile.includes(searchTerm)
@@ -260,6 +270,17 @@ export default function BookingsPage() {
             <p className="text-gray-500">No bookings found</p>
           </div>
         )}
+
+         <Pagination
+            page={page}
+            limit={limit}
+            total={total}
+            onPageChange={(newPage) => setPage(newPage)}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1); // reset to first page when limit changes
+            }}
+          />
       </div>
 
       {/* Booking Modal */}

@@ -18,6 +18,7 @@ export function useCategories() {
         setLoading(true);
         hasFetched.current = true;
         const data = await api.getCategories();
+        console.log(data)
         setCategories(data);
         setError(null);
       } catch (err) {

@@ -5,68 +5,82 @@ import { Search, Filter, Edit, Trash2, Plus, Star } from 'lucide-react'
 import { api, Service } from '@/lib/api'
 import ServiceModal from '@/components/admin/modals/ServiceModal'
 import DeleteConfirmModal from '@/components/admin/modals/DeleteConfirmModal'
+import Pagination from "@/components/Pagination"
 
 export default function ServicesPage() {
-  const [services, setServices] = useState<Service[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterCategory, setFilterCategory] = useState<string>('all')
-  const [showServiceModal, setShowServiceModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    fetchServices()
-  }, [])
+    fetchServices(page);
+  }, [page, filterCategory]);
 
-  const fetchServices = async () => {
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async (currentPage: number = 1) => {
     try {
-      setLoading(true)
-      const data = await api.getServices()
-      setServices(data)
+      setLoading(true);
+      const categoryId = filterCategory !== "all" ? filterCategory : undefined;
+      const res = await api.getServices(categoryId, currentPage, limit);
+      setServices(res.data);
+      setTotal(res.total);
     } catch (error) {
-      console.error('Failed to fetch services:', error)
+      console.error("Failed to fetch services:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleAddService = () => {
-    setSelectedService(null)
-    setModalMode('create')
-    setShowServiceModal(true)
-  }
+    setSelectedService(null);
+    setModalMode("create");
+    setShowServiceModal(true);
+  };
 
   const handleEditService = (service: Service) => {
-    setSelectedService(service)
-    setModalMode('edit')
-    setShowServiceModal(true)
-  }
+    setSelectedService(service);
+    setModalMode("edit");
+    setShowServiceModal(true);
+  };
 
   const handleDeleteService = (service: Service) => {
-    setSelectedService(service)
-    setShowDeleteModal(true)
-  }
+    setSelectedService(service);
+    setShowDeleteModal(true);
+  };
 
   const confirmDelete = async () => {
-    if (!selectedService) return
-    
-    try {
-      await api.deleteService(selectedService.id)
-      await fetchServices()
-    } catch (error) {
-      console.error('Failed to delete service:', error)
-      alert('Failed to delete service')
-    }
-  }
+    if (!selectedService) return;
 
-  const filteredServices = services.filter(service => {
-    const matchesSearch = service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = filterCategory === 'all' || service.category?.slug === filterCategory
-    return matchesSearch && matchesCategory
-  })
+    try {
+      await api.deleteService(selectedService.id);
+      await fetchServices();
+    } catch (error) {
+      console.error("Failed to delete service:", error);
+      alert("Failed to delete service");
+    }
+  };
+
+  const filteredServices = services.filter((service) => {
+    const matchesSearch =
+      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      filterCategory === "all" || service.category?.slug === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   if (loading) {
     return (
@@ -88,14 +102,14 @@ export default function ServicesPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Services</h1>
-        <button 
+        <button
           onClick={handleAddService}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
         >
@@ -109,7 +123,10 @@ export default function ServicesPage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search services..."
@@ -135,25 +152,30 @@ export default function ServicesPage() {
         {/* Services Grid */}
         <div className="p-6">
           {filteredServices.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredServices.map((service) => (
-                <div key={service.id} className="border border-gray-200 rounded-lg overflow-hidden hover:border-primary/20 transition-colors">
-                  <img 
-                    src={service.image} 
+                <div
+                  key={service.id}
+                  className="border border-gray-200 rounded-lg overflow-hidden hover:border-primary/20 transition-colors m-3 md:m-2 lg:m-3"
+                >
+                  <img
+                    src={service.image}
                     alt={service.title}
                     className="w-full h-32 object-cover"
                   />
                   <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900 line-clamp-1">{service.title}</h3>
+                      <h5 className="font-semibold text-gray-900 line-clamp-1">
+                        {service.title}
+                      </h5>
                       <div className="flex items-center gap-1">
-                        <button 
+                        <button
                           onClick={() => handleEditService(service)}
                           className="text-gray-600 hover:text-primary"
                         >
                           <Edit size={16} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDeleteService(service)}
                           className="text-gray-600 hover:text-red-600"
                         >
@@ -161,23 +183,38 @@ export default function ServicesPage() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{service.description}</p>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1">
-                        <Star size={14} className="text-yellow-400" fill="currentColor" />
-                        <span className="text-sm font-medium">{service.rating}</span>
-                        <span className="text-sm text-gray-500">({service.reviewCount})</span>
+                    {/* <p className="text-sm text-gray-600 mb-3 line-clamp-2">{service.description}</p> */}
+                    <div className="flex items-center justify-between w-full mb-4">
+                      {/* Left side: rating + reviews */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center text-yellow-400">
+                          <Star size={16} fill="currentColor" />
+                          <span className="ml-1 text-gray-800 font-medium">
+                            {service.rating}
+                          </span>
+                        </div>
+                        <span className="text-gray-500">
+                          ({service.reviewCount})
+                        </span>
                       </div>
-                      <span className="text-sm font-bold text-primary">{service.price}</span>
+
+                      {/* Right side: price */}
+                      <div className="text-lg font-bold text-primary">
+                        {service.price}
+                      </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">{service.category?.name}</span>
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        service.isActive 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {service.isActive ? 'Active' : 'Inactive'}
+                      <span className="text-xs text-gray-500">
+                        {service.category?.name}
+                      </span>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          service.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {service.isActive ? "Active" : "Inactive"}
                       </span>
                     </div>
                   </div>
@@ -190,6 +227,16 @@ export default function ServicesPage() {
             </div>
           )}
         </div>
+          <Pagination
+            page={page}
+            limit={limit}
+            total={total}
+            onPageChange={(newPage) => setPage(newPage)}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1); // reset to first page when limit changes
+            }}
+          />
       </div>
 
       {/* Service Modal */}
@@ -211,5 +258,5 @@ export default function ServicesPage() {
         itemName={selectedService?.title}
       />
     </div>
-  )
+  );
 }

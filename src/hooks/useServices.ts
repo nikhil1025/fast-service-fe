@@ -21,7 +21,7 @@ export function useServices(categoryId?: string) {
         setLoading(true);
         hasFetched.current = fetchKey;
         const data = await api.getServices(categoryId);
-        setServices(data);
+        setServices(data.data);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch services');
@@ -42,7 +42,7 @@ export function useServices(categoryId?: string) {
       setLoading(true);
       hasFetched.current = fetchKey;
       const data = await api.getServices(categoryId);
-      setServices(data);
+      setServices(data.data);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch services');

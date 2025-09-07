@@ -44,7 +44,7 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="hero-section relative min-h-[50vh] flex items-center">
+    <section className="hero-section relative min-h-[50vh] flex items-center py-8">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center"

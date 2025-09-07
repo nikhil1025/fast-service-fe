@@ -68,7 +68,7 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
   const fetchServices = async () => {
     try {
       const data = await api.getServices()
-      setServices(data)
+      setServices(data.data)
     } catch (err) {
       console.error('Failed to fetch services:', err)
     }
@@ -143,11 +143,14 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      // onClick={onClose}
+    >
+      <div className="fixed right-0 top-0 h-full w-full max-w-4xl  bg-white shadow-2xl z-50 border-l border-gray-200 animate-slideIn overflow-y-auto p-6">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {mode === 'create' ? 'Add New Booking' : 'Edit Booking'}
+            {mode === "create" ? "Add New Booking" : "Edit Booking"}
           </h2>
           <button
             onClick={onClose}
@@ -170,17 +173,24 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Service *
               </label>
-              {mode === 'create' ? (
+              {mode === "create" ? (
                 <select
                   value={formData.serviceName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, serviceName: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      serviceName: e.target.value,
+                    }))
+                  }
                   disabled={loading}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                   required
                 >
                   <option value="">Select Service</option>
-                  {services.map(service => (
-                    <option key={service.id} value={service.title}>{service.title}</option>
+                  {services.map((service) => (
+                    <option key={service.id} value={service.title}>
+                      {service.title}
+                    </option>
                   ))}
                 </select>
               ) : (
@@ -200,8 +210,10 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                disabled={loading || mode === 'edit'}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                disabled={loading || mode === "edit"}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                 required
               />
@@ -216,8 +228,10 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
               <input
                 type="tel"
                 value={formData.mobile}
-                onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
-                disabled={loading || mode === 'edit'}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, mobile: e.target.value }))
+                }
+                disabled={loading || mode === "edit"}
                 placeholder="+971 XX XXX XXXX"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                 required
@@ -232,13 +246,18 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
                 <input
                   type="date"
                   value={formData.date}
-                  onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                  disabled={loading || mode === 'edit'}
-                  min={new Date().toISOString().split('T')[0]}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, date: e.target.value }))
+                  }
+                  disabled={loading || mode === "edit"}
+                  min={new Date().toISOString().split("T")[0]}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                   required
                 />
-                <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                <Calendar
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  size={18}
+                />
               </div>
             </div>
           </div>
@@ -249,27 +268,31 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
             </label>
             <textarea
               value={formData.address}
-              onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-              disabled={loading || mode === 'edit'}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, address: e.target.value }))
+              }
+              disabled={loading || mode === "edit"}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
               required
             />
           </div>
 
-          {mode === 'edit' && (
+          {mode === "edit" && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Status *
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, status: e.target.value }))
+                }
                 disabled={loading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                 required
               >
-                {getStatusOptions().map(option => (
+                {getStatusOptions().map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -284,8 +307,10 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
             </label>
             <textarea
               value={formData.message}
-              onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-              disabled={loading || mode === 'edit'}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, message: e.target.value }))
+              }
+              disabled={loading || mode === "edit"}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
             />
@@ -310,11 +335,15 @@ export default function BookingModal({ isOpen, onClose, onSuccess, booking, mode
               ) : (
                 <Save size={16} />
               )}
-              {loading ? 'Saving...' : mode === 'create' ? 'Create Booking' : 'Update Status'}
+              {loading
+                ? "Saving..."
+                : mode === "create"
+                ? "Create Booking"
+                : "Update Status"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

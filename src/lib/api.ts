@@ -1,5 +1,6 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+// process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
 
 // Types
 export interface User {
@@ -7,7 +8,7 @@ export interface User {
   email: string;
   name: string;
   phone: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   isActive: boolean;
   createdAt: string;
 }
@@ -39,7 +40,7 @@ export interface Service {
   image: string;
   rating: number;
   reviewCount: number;
-  reviews?: Review[],
+  reviews?: Review[];
   price: string;
   duration: string;
   features: string[];
@@ -59,7 +60,7 @@ export interface Booking {
   address: string;
   date: string;
   message?: string;
-  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   user?: User;
   service?: Service;
   createdAt: string;
@@ -110,10 +111,20 @@ export interface SearchResult {
   suggestions: string[];
 }
 
+
+interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+
 // API Client Class
 class ApiClient {
   private baseURL: string;
   private token: string | null = null;
+  
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
@@ -212,9 +223,12 @@ class ApiClient {
     if (search) params.append("search", search);
     if (role && role !== "all") params.append("role", role);
 
-    return this.request<{ data: User[]; total: number }>(
-      "/users?" + params.toString()
-    );
+    return this.request<{
+      data: User[];
+      total: number;
+      page: number;
+      limit: number;
+    }>("/users?" + params.toString());
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User> {
@@ -235,8 +249,18 @@ class ApiClient {
     return this.request<Category[]>("/categories");
   }
 
-  async getCategoriesHierarchy(): Promise<Category[]> {
-    return this.request<Category[]>("/categories/hierarchy");
+  async getCategoriesHierarchy(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ data: Category[]; total: number; page: number }> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    return this.request<{ data: Category[]; total: number; page: number }>(
+      "/categories/hierarchy?" + params.toString()
+    );
   }
 
   async getCategoryBySlug(slug: string): Promise<Category> {
@@ -287,9 +311,23 @@ class ApiClient {
   }
 
   // Services endpoints
-  async getServices(categoryId?: string): Promise<Service[]> {
-    const params = categoryId ? `?categoryId=${categoryId}` : "";
-    return this.request<Service[]>(`/services${params}`);
+  async getServices(
+    categoryId?: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ data: Service[]; total: number; page: number; limit: number }> {
+    const params = new URLSearchParams();
+
+    if (categoryId) params.append("categoryId", categoryId);
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+
+    return this.request<{
+      data: Service[];
+      total: number;
+      page: number;
+      limit: number;
+    }>(`/services?${params.toString()}`);
   }
 
   async getFeaturedServices(): Promise<Service[]> {
@@ -375,8 +413,26 @@ class ApiClient {
     return this.request<Booking[]>("/bookings");
   }
 
-  async getAllBookings(): Promise<Booking[]> {
-    return this.request<Booking[]>("/bookings?all=true");
+  // async getAllBookings(): Promise<Booking[]> {
+  //   return this.request<Booking[]>("/bookings?all=true");
+  // }
+
+  async getAllBookings(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ data: Booking[]; total: number; page: number; limit: number }> {
+    const params = new URLSearchParams({
+      all: "true",
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    return this.request<{
+      data: Booking[];
+      total: number;
+      page: number;
+      limit: number;
+    }>(`/bookings?&&${params.toString()}`);
   }
 
   async getBooking(id: string): Promise<Booking> {
@@ -422,9 +478,13 @@ class ApiClient {
     });
   }
 
-  async getContacts(): Promise<Contact[]> {
-    return this.request<Contact[]>("/contact");
+  // async getContacts(): Promise<Contact[]> {
+  //   return this.request<Contact[]>("/contact");
+  // }
+  async getContacts(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Contact>> {
+    return this.request<PaginatedResponse<Contact>>(`/contact?page=${page}&limit=${limit}`);
   }
+
 
   async markContactAsRead(id: string): Promise<Contact> {
     return this.request<Contact>(`/contact/${id}/read`, {
@@ -493,25 +553,30 @@ export const auth = {
     api.setToken(response.access_token);
     return response;
   },
-  
-  register: async (data: { email: string; password: string; name: string; phone: string }) => {
+
+  register: async (data: {
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+  }) => {
     const response = await api.register(data);
     api.setToken(response.access_token);
     return response;
   },
-  
+
   logout: () => {
     api.removeToken();
   },
-  
+
   getToken: () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth_token');
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("auth_token");
     }
     return null;
   },
-  
+
   isAuthenticated: () => {
     return !!auth.getToken();
-  }
+  },
 };

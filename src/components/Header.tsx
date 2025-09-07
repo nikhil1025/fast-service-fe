@@ -148,6 +148,7 @@ import MegaMenu from './MegaMenu'
 import MobileMenu from './MobileMenu'
 import { useAuth } from '@/hooks/useAuth'
 import { useCategories } from '@/hooks/useCategories'
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -156,14 +157,17 @@ export default function Header() {
   const { user, logout, isAuthenticated } = useAuth()
   const { categories } = useCategories()
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-    if (!isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'auto'
-    }
+const pathname = usePathname()
+
+const toggleMobileMenu = () => {
+  const newState = !isMobileMenuOpen
+  setIsMobileMenuOpen(newState)
+
+  // Apply overflow lock only if route contains "admin"
+  if (pathname.includes("admin")) {
+    document.body.style.overflow = newState ? "hidden" : "auto"
   }
+}
 
   const handleLogout = () => {
     logout()

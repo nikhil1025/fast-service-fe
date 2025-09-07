@@ -45,6 +45,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
       fetchCategories()
       
       if (mode === 'edit' && service) {
+        console.log(service.features);
         setFormData({
           title: service.title,
           categoryId: service.categoryId,
@@ -52,10 +53,15 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
           image: service.image,
           price: service.price,
           duration: service.duration,
-          features: service.features.length > 0 ? service.features : [''],
+          features:
+            typeof service.features === "string"
+              ? JSON.parse(service.features)
+              : Array.isArray(service.features)
+              ? service.features
+              : [""],
           isActive: service.isActive,
-          sortOrder: service.sortOrder
-        })
+          sortOrder: service.sortOrder,
+        });
       } else {
         setFormData({
           title: '',
@@ -132,11 +138,16 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    // <div >
+    //   <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      // onClick={onClose}
+    >
+      <div className="fixed right-0 top-0 h-full w-full max-w-4xl  bg-white shadow-2xl z-50 border-l border-gray-200 animate-slideIn overflow-y-auto p-6">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {mode === 'create' ? 'Add New Service' : 'Edit Service'}
+            {mode === "create" ? "Add New Service" : "Edit Service"}
           </h2>
           <button
             onClick={onClose}
@@ -162,7 +173,9 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
                 disabled={loading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                 required
@@ -175,14 +188,21 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               </label>
               <select
                 value={formData.categoryId}
-                onChange={(e) => setFormData(prev => ({ ...prev, categoryId: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    categoryId: e.target.value,
+                  }))
+                }
                 disabled={loading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                 required
               >
                 <option value="">Select Category</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -194,7 +214,12 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               disabled={loading}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
@@ -209,7 +234,9 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
             <input
               type="url"
               value={formData.image}
-              onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, image: e.target.value }))
+              }
               disabled={loading}
               placeholder="https://example.com/image.jpg"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
@@ -225,7 +252,9 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               <input
                 type="text"
                 value={formData.price}
-                onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, price: e.target.value }))
+                }
                 disabled={loading}
                 placeholder="AED 299"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
@@ -240,7 +269,9 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               <input
                 type="text"
                 value={formData.duration}
-                onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, duration: e.target.value }))
+                }
                 disabled={loading}
                 placeholder="2-3 hours"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
@@ -255,7 +286,12 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               <input
                 type="number"
                 value={formData.sortOrder}
-                onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    sortOrder: parseInt(e.target.value) || 0,
+                  }))
+                }
                 disabled={loading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
               />
@@ -278,28 +314,32 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               </button>
             </div>
             <div className="space-y-2">
-              {formData.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={feature}
-                    onChange={(e) => updateFeature(index, e.target.value)}
-                    disabled={loading}
-                    placeholder="Enter feature"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
-                  />
-                  {formData.features.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeFeature(index)}
+              {formData &&
+                formData.features &&
+                formData.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={feature}
+                      onChange={(e) => updateFeature(index, e.target.value)}
                       disabled={loading}
-                      className="text-red-600 hover:text-red-800 disabled:opacity-50"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  )}
-                </div>
-              ))}
+                      placeholder="Enter feature"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
+                    />
+                    {formData &&
+                      formData.features &&
+                      formData.features.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeFeature(index)}
+                          disabled={loading}
+                          className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                  </div>
+                ))}
             </div>
           </div>
 
@@ -308,11 +348,16 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               type="checkbox"
               id="isActive"
               checked={formData.isActive}
-              onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, isActive: e.target.checked }))
+              }
               disabled={loading}
               className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
             />
-            <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
+            <label
+              htmlFor="isActive"
+              className="ml-2 block text-sm text-gray-700"
+            >
               Active
             </label>
           </div>
@@ -336,11 +381,11 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, service, mode
               ) : (
                 <Save size={16} />
               )}
-              {loading ? 'Saving...' : 'Save Service'}
+              {loading ? "Saving..." : "Save Service"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

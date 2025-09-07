@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Search, Mail, MailOpen, Trash2, Eye } from 'lucide-react'
 import { api, Contact } from '@/lib/api'
+import Pagination from "@/components/Pagination"
 
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Contact[]>([])
@@ -12,15 +13,36 @@ export default function MessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState<Contact | null>(null)
   const [actionLoading, setActionLoading] = useState<{ [key: string]: boolean }>({})
 
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(5)
+  const [total, setTotal] = useState(0)
+
   useEffect(() => {
-    fetchMessages()
+    fetchMessages(page)
   }, [])
 
-  const fetchMessages = async () => {
+  // const fetchMessages = async () => {
+  //   try {
+  //     setLoading(true)
+  //     const data = await api.getContacts()
+  //     setMessages(data)
+  //   } catch (error) {
+  //     console.error('Failed to fetch messages:', error)
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
+
+  useEffect(() => {
+    fetchMessages(page)
+  }, [page])
+
+  const fetchMessages = async (pageNum: number) => {
     try {
       setLoading(true)
-      const data = await api.getContacts()
+      const { data, total } = await api.getContacts(pageNum, limit)
       setMessages(data)
+      setTotal(total)
     } catch (error) {
       console.error('Failed to fetch messages:', error)
     } finally {
@@ -45,7 +67,7 @@ export default function MessagesPage() {
     try {
       setActionLoading(prev => ({ ...prev, [id]: true }))
       await api.deleteContact(id)
-      await fetchMessages() // Refresh the list
+      await fetchMessages(page) // Refresh the list
       if (selectedMessage?.id === id) {
         setSelectedMessage(null)
       }
@@ -151,9 +173,9 @@ export default function MessagesPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className={`font-medium ${!message.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
+                          <h5 className={`font-medium font-bold ${!message.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
                             {message.name}
-                          </h3>
+                          </h5>
                           {!message.isRead && (
                             <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                           )}
@@ -204,6 +226,16 @@ export default function MessagesPage() {
               </div>
             )}
           </div>
+          <Pagination
+            page={page}
+            limit={limit}
+            total={total}
+            onPageChange={(newPage) => setPage(newPage)}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1); // reset to first page when limit changes
+            }}
+          />
         </div>
 
         {/* Message Detail */}
