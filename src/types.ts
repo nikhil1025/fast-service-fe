@@ -9,6 +9,7 @@ export interface ServiceCategory {
   })[];
 }
 
+
 export interface CustomerReview {
   id: number;
   name: string;
