@@ -1,6 +1,6 @@
 const API_BASE_URL =
-process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
-// process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+// process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
 
 // Types
 export interface User {
@@ -124,7 +124,6 @@ interface PaginatedResponse<T> {
 class ApiClient {
   private baseURL: string;
   private token: string | null = null;
-  
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
@@ -453,9 +452,42 @@ class ApiClient {
   }
 
   // Reviews endpoints
-  async getReviews(serviceId?: string): Promise<Review[]> {
-    const params = serviceId ? `?serviceId=${serviceId}` : "";
-    return this.request<Review[]>(`/reviews${params}`);
+  // async getReviews(serviceId?: string): Promise<Review[]> {
+  //   const params = serviceId ? `?serviceId=${serviceId}` : "";
+  //   return this.request<Review[]>(`/reviews${params}`);
+  // }
+
+  //   async getReviews(page: number = 1, limit: number = 10) {
+  //   const params = new URLSearchParams({
+  //     page: page.toString(),
+  //     limit: limit.toString(),
+  //   });
+
+  //   return this.request<{ data: Review[]; total: number; page: number; limit: number }>(
+  //     "/reviews?" + params.toString()
+  //   );
+  // }
+
+  async getReviews(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    rating: string = "all"
+  ) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (search) params.append("search", search);
+    if (rating && rating !== "all") params.append("rating", rating);
+
+    return this.request<{
+      data: Review[];
+      total: number;
+      page: number;
+      limit: number;
+    }>("/reviews?" + params.toString());
   }
 
   async deleteReview(id: string): Promise<void> {
@@ -481,10 +513,14 @@ class ApiClient {
   // async getContacts(): Promise<Contact[]> {
   //   return this.request<Contact[]>("/contact");
   // }
-  async getContacts(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Contact>> {
-    return this.request<PaginatedResponse<Contact>>(`/contact?page=${page}&limit=${limit}`);
+  async getContacts(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<PaginatedResponse<Contact>> {
+    return this.request<PaginatedResponse<Contact>>(
+      `/contact?page=${page}&limit=${limit}`
+    );
   }
-
 
   async markContactAsRead(id: string): Promise<Contact> {
     return this.request<Contact>(`/contact/${id}/read`, {

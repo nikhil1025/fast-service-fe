@@ -157,26 +157,28 @@ export default function Header() {
   const { user, logout, isAuthenticated } = useAuth()
   const { categories } = useCategories()
 
-const pathname = usePathname()
+  const pathname = usePathname()
 
-const toggleMobileMenu = () => {
-  const newState = !isMobileMenuOpen
-  setIsMobileMenuOpen(newState)
+  const toggleMobileMenu = () => {
+    const newState = !isMobileMenuOpen
+    setIsMobileMenuOpen(newState)
 
-  // Apply overflow lock only if route contains "admin"
-  if (pathname.includes("admin")) {
-    document.body.style.overflow = newState ? "hidden" : "auto"
+    // Apply overflow lock only if route contains "admin"
+    if (pathname.includes("admin")) {
+      document.body.style.overflow = newState ? "hidden" : "auto"
+    }
   }
-}
 
   const handleLogout = () => {
     logout()
     setShowUserMenu(false)
   }
 
-  if (isAuthenticated && user){
+  if (isAuthenticated &&  user && user.role === "admin"){
+    console.log(user)
     return <></>;
   }
+
     return (
       <header className="sticky top-0 z-50 w-full bg-white shadow-md">
         <div className="container-custom">

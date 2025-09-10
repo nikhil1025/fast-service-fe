@@ -1,65 +1,85 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Search, Star, Trash2, Eye } from 'lucide-react'
-import { api, Review } from '@/lib/api'
+import { useState, useEffect } from "react";
+import { Search, Star, Trash2, Eye } from "lucide-react";
+import { api, Review } from "@/lib/api";
+import Pagination from "@/components/Pagination";
 
 export default function ReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterRating, setFilterRating] = useState<string>('all')
-  const [actionLoading, setActionLoading] = useState<{ [key: string]: boolean }>({})
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRating, setFilterRating] = useState<string>("all");
+  const [actionLoading, setActionLoading] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    fetchReviews()
-  }, [])
+    fetchReviews(page, limit, searchTerm, filterRating);
+  }, [page, limit, searchTerm, filterRating]);
 
-  const fetchReviews = async () => {
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async (
+    pageNum = 1,
+    limitNum = 5,
+    search = "",
+    rating = "all"
+  ) => {
     try {
-      setLoading(true)
-      const data = await api.getReviews()
-      setReviews(data)
+      setLoading(true);
+      const res = await api.getReviews(pageNum, limitNum, search, rating);
+      console.log(res.data);
+      setReviews(res.data ?? []);
+      setTotal(res.total);
     } catch (error) {
-      console.error('Failed to fetch reviews:', error)
+      console.error("Failed to fetch reviews:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDeleteReview = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this review?')) return
-    
-    try {
-      setActionLoading(prev => ({ ...prev, [id]: true }))
-      await api.deleteReview(id)
-      await fetchReviews() // Refresh the list
-    } catch (error) {
-      console.error('Failed to delete review:', error)
-      alert('Failed to delete review')
-    } finally {
-      setActionLoading(prev => ({ ...prev, [id]: false }))
-    }
-  }
+    if (!confirm("Are you sure you want to delete this review?")) return;
 
-  const filteredReviews = reviews.filter(review => {
-    const matchesSearch = review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         review.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         review.service.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesRating = filterRating === 'all' || review.rating.toString() === filterRating
-    return matchesSearch && matchesRating
-  })
+    try {
+      setActionLoading((prev) => ({ ...prev, [id]: true }));
+      await api.deleteReview(id);
+      await fetchReviews(); // Refresh the list
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+      alert("Failed to delete review");
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const filteredReviews = reviews.filter((review) => {
+    const matchesSearch =
+      review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.service.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRating =
+      filterRating === "all" || review.rating.toString() === filterRating;
+    return matchesSearch && matchesRating;
+  });
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
       <Star
         key={i}
         size={16}
-        className={i < rating ? 'text-yellow-400' : 'text-gray-300'}
-        fill={i < rating ? 'currentColor' : 'none'}
+        className={i < rating ? "text-yellow-400" : "text-gray-300"}
+        fill={i < rating ? "currentColor" : "none"}
       />
-    ))
-  }
+    ));
+  };
 
   if (loading) {
     return (
@@ -78,7 +98,7 @@ export default function ReviewsPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -95,7 +115,10 @@ export default function ReviewsPage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search reviews..."
@@ -133,15 +156,17 @@ export default function ReviewsPage() {
                       {review.rating}/5
                     </span>
                   </div>
-                  
+
                   <p className="text-gray-900 mb-3">{review.comment}</p>
-                  
+
                   <div className="flex items-center gap-4 text-sm text-gray-600">
                     <span>By: {review.user.name}</span>
                     <span>•</span>
                     <span>Service: {review.service.title}</span>
                     <span>•</span>
-                    <span>{new Date(review.createdAt).toLocaleDateString()}</span>
+                    <span>
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
 
@@ -149,7 +174,7 @@ export default function ReviewsPage() {
                   <button className="text-gray-600 hover:text-primary">
                     <Eye size={16} />
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDeleteReview(review.id)}
                     disabled={actionLoading[review.id]}
                     className="text-gray-600 hover:text-red-600 disabled:opacity-50"
@@ -160,6 +185,17 @@ export default function ReviewsPage() {
               </div>
             </div>
           ))}
+
+          <Pagination
+            page={page}
+            limit={limit}
+            total={total}
+            onPageChange={(newPage) => setPage(newPage)}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1); // reset to first page when limit changes
+            }}
+          />
         </div>
 
         {filteredReviews.length === 0 && (
@@ -169,5 +205,5 @@ export default function ReviewsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

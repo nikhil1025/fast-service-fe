@@ -209,7 +209,7 @@ function SearchPageInner() {
             {/* Services Grid/List */}
             {results && results.services.length > 0 ? (
               <>
-                <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
+                <div className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6' : 'space-y-6'}>
                   {results.services.map((service) => (
                     <div key={service.id} className={`bg-white rounded-lg shadow-sm border border-gray-100 hover:border-primary/20 transition-all duration-300 ${viewMode === 'list' ? 'flex gap-6' : ''}`}>
                       <Link href={`/services/${service.id}`} className={`block ${viewMode === 'list' ? 'flex-shrink-0' : ''}`}>
@@ -221,12 +221,12 @@ function SearchPageInner() {
                           />
                         </div>
                       </Link>
-                      <div className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
+                      <div className={`p-2 px-4 lg:p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
                         <Link href={`/services/${service.id}`}>
-                          <h3 className="text-xl font-semibold text-gray-800 mb-2 hover:text-primary transition-colors">
+                          <h3 className="text-sm lg:text-xl font-semibold text-gray-800 mb-2 hover:text-primary transition-colors">
                             {service.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {/* <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                             {service.description}
                           </p>
                           <div className="flex items-center gap-2 mb-4">
@@ -235,17 +235,17 @@ function SearchPageInner() {
                               <span className="ml-1 text-gray-800 font-medium">{service.rating}</span>
                             </div>
                             <span className="text-gray-500">({service.reviewCount} reviews)</span>
-                          </div>
-                          <div className="text-lg font-bold text-primary mb-4">
+                          </div> */}
+                          {/* <div className="text-lg font-bold text-primary mb-4">
                             {service.price}
-                          </div>
+                          </div> */}
                         </Link>
-                        <button 
+                        {/* <button 
                           onClick={() => handleBookNow(service.title)}
                           className="w-full bg-primary text-white py-2.5 rounded-md hover:bg-primary/90 transition duration-200"
                         >
                           Book Now
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   ))}
