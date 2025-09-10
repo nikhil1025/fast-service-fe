@@ -1,7 +1,0 @@
-{
-  "/change-password/page": "app/change-password/page.js",
-  "/profile/page": "app/profile/page.js",
-  "/page": "app/page.js",
-  "/search/page": "app/search/page.js",
-  "/customer-login/page": "app/customer-login/page.js"
-}
