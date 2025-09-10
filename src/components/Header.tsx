@@ -238,13 +238,13 @@ export default function Header() {
                         >
                           Profile
                         </Link>
-                        <Link
+                        {/* <Link
                           href="/bookings"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setShowUserMenu(false)}
                         >
                           My Bookings
-                        </Link>
+                        </Link> */}
                         <button
                           onClick={handleLogout}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"

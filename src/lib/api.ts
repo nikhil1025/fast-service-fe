@@ -1,6 +1,6 @@
 const API_BASE_URL =
-process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
-// process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+// process.env.NEXT_PUBLIC_API_URL || "http://13.234.217.37:3001/test/api";
+process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
 
 // Types
 export interface User {
@@ -237,6 +237,12 @@ class ApiClient {
     });
   }
 
+  async getUser(id: string): Promise<User> {
+    return this.request<User>(`/users/${id}`, {
+      method: "GET",
+    });
+  }
+
   async deleteUser(id: string): Promise<void> {
     return this.request<void>(`/users/${id}`, {
       method: "DELETE",
@@ -442,6 +448,22 @@ class ApiClient {
     return this.request<Booking>(`/bookings/${id}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
+    });
+  }
+
+  async getUserBookings(): Promise<{
+    data: Booking[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    return this.request<{
+      data: Booking[];
+      total: number;
+      page: number;
+      limit: number;
+    }>(`/bookings`, {
+      method: "GET",
     });
   }
 

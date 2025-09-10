@@ -1,32 +1,77 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Camera, Save, User, Info, Edit2 } from "lucide-react";
+import { Camera, User, Info, List } from "lucide-react";
+import { api } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<
-    "profile" | "details" | "description"
+    "profile" | "details" | "bookings"
   >("profile");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "+971 50 123 4567",
-    address: "Dubai, UAE",
-    description:
-      "",
+    name: "",
+    email: "",
+    phone: "",
+    description: "",
   });
 
-  // Load profile image (replace with API call)
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+
+  // Load profile image from localStorage
   useEffect(() => {
     const savedImage = localStorage.getItem("profileImage");
     if (savedImage) setProfileImage(savedImage);
   }, []);
+
+  // Fetch user details
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (user) {
+          const res = await api.getUser(user.id);
+          setUserData({
+            name: res.name,
+            email: res.email,
+            phone: res.phone,
+            description: "This is a sample description about John Doe.",
+          });
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch user data."
+        );
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  // Fetch bookings for this user
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (!user) return;
+      setLoadingBookings(true);
+      try {
+        const res = await api.getUserBookings()// Replace with your API
+        console.log(res)
+        setBookings(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingBookings(false);
+      }
+    };
+
+    if (activeTab === "bookings") fetchBookings();
+  }, [user, activeTab]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -44,42 +89,15 @@ export default function ProfilePage() {
 
     setIsUploading(true);
     setError(null);
-    setSuccess(null);
 
     try {
-      // Replace with actual API
       await new Promise((resolve) => setTimeout(resolve, 1500));
       localStorage.setItem("profileImage", profileImage || "");
-      setSuccess("Profile image updated successfully.");
-      setSelectedFile(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setIsUploading(false);
-    }
-  };
-
-  const handleUserChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveDetails = async () => {
-    setSuccess(null);
-    setError(null);
-    setIsUploading(true);
-    try {
-      // Replace with API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setSuccess("Profile details updated successfully.");
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to update details."
-      );
-    } finally {
-      setIsUploading(false);
+      setSelectedFile(null);
     }
   };
 
@@ -112,13 +130,13 @@ export default function ProfilePage() {
           </button>
           <button
             className={`flex items-center gap-2 py-2 px-4 rounded-t ${
-              activeTab === "description"
+              activeTab === "bookings"
                 ? "bg-primary text-white"
                 : "text-gray-600 hover:text-primary"
             }`}
-            onClick={() => setActiveTab("description")}
+            onClick={() => setActiveTab("bookings")}
           >
-            <Edit2 className="w-4 h-4" /> Description
+            <List className="w-4 h-4" /> Bookings
           </button>
         </div>
 
@@ -154,12 +172,10 @@ export default function ProfilePage() {
                 disabled={isUploading || !selectedFile}
                 className="flex items-center gap-2 bg-primary text-white py-2 px-6 rounded-md hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Save className="w-5 h-5" />
                 {isUploading ? "Uploading..." : "Upload"}
               </button>
 
               {error && <p className="text-red-600 text-sm">{error}</p>}
-              {success && <p className="text-green-600 text-sm">{success}</p>}
             </div>
           )}
 
@@ -172,10 +188,9 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  name="name"
                   value={userData.name}
-                  onChange={handleUserChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  readOnly
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100 cursor-not-allowed"
                 />
               </div>
               <div>
@@ -184,10 +199,9 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="email"
-                  name="email"
                   value={userData.email}
-                  onChange={handleUserChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  readOnly
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100 cursor-not-allowed"
                 />
               </div>
               <div>
@@ -196,56 +210,41 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  name="phone"
                   value={userData.phone}
-                  onChange={handleUserChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  readOnly
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100 cursor-not-allowed"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  value={userData.address}
-                  onChange={handleUserChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                />
-              </div>
-              <button
-                onClick={handleSaveDetails}
-                disabled={isUploading}
-                className="flex items-center gap-2 bg-primary text-white py-2 px-6 rounded-md hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Save className="w-5 h-5" />
-                {isUploading ? "Saving..." : "Save Details"}
-              </button>
             </div>
           )}
 
-          {/* Description Tab */}
-          {activeTab === "description" && (
+          {/* Bookings Tab */}
+          {activeTab === "bookings" && (
             <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Profile Description
-              </label>
-              <textarea
-                name="description"
-                value={userData.description}
-                onChange={handleUserChange}
-                rows={5}
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none"
-              />
-              <button
-                onClick={handleSaveDetails}
-                disabled={isUploading}
-                className="flex items-center gap-2 bg-primary text-white py-2 px-6 rounded-md hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Save className="w-5 h-5" />
-                {isUploading ? "Saving..." : "Save Description"}
-              </button>
+              {loadingBookings ? (
+                <p>Loading bookings...</p>
+              ) : bookings.length === 0 ? (
+                <p>No bookings found.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {bookings.map((booking) => (
+                    <li
+                      key={booking.id}
+                      className="border p-4 rounded-md shadow-sm bg-gray-50"
+                    >
+                      <p>
+                        <strong>Service:</strong> {booking.serviceName}
+                      </p>
+                      <p>
+                        <strong>Date:</strong> {booking.date}
+                      </p>
+                      <p>
+                        <strong>Status:</strong> {booking.status}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
         </div>
