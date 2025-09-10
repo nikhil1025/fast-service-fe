@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://api.fastservices4u.com/test/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://api.fastservices4u.com/test/api";
 // process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
 
 // Types
