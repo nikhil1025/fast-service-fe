@@ -17,7 +17,7 @@ import {
 export default function FooterSection() {
   const { user, isAuthenticated } = useAuth();
 
-  if (user && isAuthenticated) {
+  if (user && user.role==="admin" && isAuthenticated) {
     return <></>;
   }
 
