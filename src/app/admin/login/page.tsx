@@ -56,13 +56,6 @@ export default function AdminLoginPage() {
             <p className="text-gray-600 mt-2">Access the Fast Services admin panel</p>
           </div>
 
-          {/* Demo Credentials */}
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <h3 className="text-sm font-medium text-blue-800 mb-2">Demo Admin Credentials:</h3>
-            <p className="text-sm text-blue-700">Email: admin@fastservices.com</p>
-            <p className="text-sm text-blue-700">Password: admin123</p>
-          </div>
-
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-700 text-sm">{error}</p>
