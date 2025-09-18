@@ -156,7 +156,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mainSettings, setMainSettings] = useState<MainSettings>({
-    contactPhone: "+971 12 345 6789",
+    contactPhone: "",
     contactEmail: "info@fastservices.com",
   });
   const { user, logout, isAuthenticated } = useAuth();
