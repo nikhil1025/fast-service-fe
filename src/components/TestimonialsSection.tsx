@@ -55,7 +55,8 @@ const TestimonialsSection: React.FC = () => {
             What Our Customers Say
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what our satisfied customers have to say about our services.
+            Don't just take our word for it. Here's what our satisfied customers
+            have to say about our services.
           </p>
         </div>
 
@@ -88,8 +89,12 @@ const TestimonialsSection: React.FC = () => {
                       className="w-12 h-12 rounded-full object-cover"
                     />
                     <div>
-                      <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                      <h4 className="font-semibold text-gray-800">
+                        {testimonial.name}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {testimonial.role}
+                      </p>
                     </div>
                   </div>
 
@@ -132,7 +137,7 @@ const TestimonialsSection: React.FC = () => {
             <p className="text-gray-600">Average Rating</p>
           </div>
           <div className="text-center p-6 bg-white rounded-lg shadow-sm border border-gray-100">
-            <p className="text-4xl font-bold text-primary mb-2">5K+</p>
+            <p className="text-4xl font-bold text-primary mb-2">2,500+</p>
             <p className="text-gray-600">Happy Customers</p>
           </div>
           <div className="text-center p-6 bg-white rounded-lg shadow-sm border border-gray-100">

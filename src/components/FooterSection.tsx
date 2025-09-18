@@ -1,23 +1,74 @@
 "use client";
 
-import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import {
-  Phone,
-  Mail,
-  MapPin,
+  ChevronRight,
+  Clock,
   Facebook,
   Instagram,
-  Twitter,
   Linkedin,
-  Clock,
-  ChevronRight,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter,
 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface FooterService {
+  title: string;
+  id: string;
+}
+
+interface MainSettings {
+  contactPhone: string;
+  contactEmail: string;
+}
 
 export default function FooterSection() {
   const { user, isAuthenticated } = useAuth();
+  const [footerServices, setFooterServices] = useState<FooterService[]>([]);
+  const [mainSettings, setMainSettings] = useState<MainSettings>({
+    contactPhone: "+971 12 345 6789",
+    contactEmail: "info@fastservices.com",
+  });
 
-  if (user && user.role==="admin" && isAuthenticated) {
+  useEffect(() => {
+    const fetchFooterServices = async () => {
+      try {
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_API_URL ||
+      "https://api.fastservices4u.com/test/api"
+          // "http://localhost:3001/test/api/settings/footer-services"
+        );
+        if (!res.ok) throw new Error("Failed to fetch footer services");
+        const data = await res.json();
+        setFooterServices(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const fetchMainSettings = async () => {
+      try {
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_API_URL ||
+            "https://api.fastservices4u.com/test/api"
+          // "http://localhost:3001/test/api/settings/main"
+        );
+        if (!res.ok) throw new Error("Failed to fetch main settings");
+        const data = await res.json();
+        setMainSettings(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchFooterServices();
+    fetchMainSettings();
+  }, []);
+
+  if (user && user.role === "admin" && isAuthenticated) {
     return <></>;
   }
 
@@ -101,43 +152,21 @@ export default function FooterSection() {
               Our Services
             </h3>
             <ul className="space-y-3">
-              {[
-                {
-                  name: "Home Cleaning",
-                  url: "/services/category/home-cleaning",
-                },
-                {
-                  name: "Deep Cleaning",
-                  url: "/services/category/deep-cleaning",
-                },
-                { name: "Moving Services", url: "/services/category/moving" },
-                {
-                  name: "AC Maintenance",
-                  url: "/services/category/ac-maintenance",
-                },
-                {
-                  name: "Pest Control",
-                  url: "/services/category/pest-control",
-                },
-                {
-                  name: "Painting Services",
-                  url: "/services/category/painting",
-                },
-                {
-                  name: "Storage",
-                  url: "/services/category/storage",
-                },
-              ].map((service, index) => (
-                <li key={index}>
-                  <Link
-                    href={service.url}
-                    className="flex items-center gap-2 hover:text-primary transition-colors duration-200"
-                  >
-                    <ChevronRight size={16} />
-                    {service.name}
-                  </Link>
-                </li>
-              ))}
+              {footerServices.length > 0 ? (
+                footerServices.map((service, index) => (
+                  <li key={index}>
+                    <Link
+                      href={service.id}
+                      className="flex items-center gap-2 hover:text-primary transition-colors duration-200"
+                    >
+                      <ChevronRight size={16} />
+                      {service.title}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="text-gray-400">No services available</li>
+              )}
             </ul>
           </div>
 
@@ -149,20 +178,20 @@ export default function FooterSection() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="tel:+971123456789"
+                  href={`tel:${mainSettings.contactPhone}`}
                   className="flex items-center gap-3 hover:text-primary transition-colors duration-200"
                 >
                   <Phone size={18} />
-                  +971 12 345 6789
+                  {mainSettings.contactPhone}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@fastservices.com"
+                  href={`mailto:${mainSettings.contactEmail}`}
                   className="flex items-center gap-3 hover:text-primary transition-colors duration-200"
                 >
                   <Mail size={18} />
-                  info@fastservices.com
+                  {mainSettings.contactEmail}
                 </a>
               </li>
               <li className="flex items-start gap-3">

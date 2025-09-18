@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { X, Calendar, CheckCircle } from 'lucide-react';
-import { api } from '@/lib/api';
+import React, { useState } from "react";
+import { X, Calendar, CheckCircle, Clock } from "lucide-react";
+import { api } from "@/lib/api";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -13,9 +13,10 @@ interface BookingModalProps {
 interface FormData {
   name: string;
   mobile: string;
-  email: string;
+  email?: string;
   address: string;
   date: string;
+  duration: string; // duration in hours
   message: string;
 }
 
@@ -23,18 +24,24 @@ interface FormErrors {
   name?: string;
   mobile?: string;
   address?: string;
-  email?: string;  
+  email?: string;
   date?: string;
+  duration?: string;
 }
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceName }) => {
+const BookingModal: React.FC<BookingModalProps> = ({
+  isOpen,
+  onClose,
+  serviceName,
+}) => {
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    mobile: '',
-    address: '',
-    email: '', 
-    date: '',
-    message: ''
+    name: "",
+    mobile: "",
+    address: "",
+    email: "",
+    date: "",
+    duration: "",
+    message: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -71,9 +78,9 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
+    if (formData.email && !formData.email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!emailRegex.test(formData.email.trim())) {
+    } else if (formData.email && !emailRegex.test(formData.email.trim())) {
       newErrors.email = "Please enter a valid email address";
     }
 
@@ -88,57 +95,73 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
       newErrors.date = "Please select a future date";
     }
 
+    // Duration validation
+    if (!formData.duration) {
+      newErrors.duration = "Duration is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+     setFormData((prev) => ({
+       ...prev,
+       [id]: value,
+     }));
     // Clear error when user starts typing
     if (errors[id as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [id]: undefined }));
+      setErrors((prev) => ({ ...prev, [id]: undefined }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    
+
     try {
-      await api.createBooking({
+      const payload: any = {
         serviceName,
         name: formData.name,
         mobile: formData.mobile,
-        email: formData.email,
         address: formData.address,
         date: formData.date,
+        duration: formData.duration,
         message: formData.message || undefined,
-      });
+      };
+
+      if (formData.email?.trim()) {
+        payload.email = formData.email.trim();
+      }
+
+      await api.createBooking(payload);
 
       setIsSuccess(true);
-      
-      // Reset form after successful submission
+
       setTimeout(() => {
         setFormData({
-          name: '',
-          mobile: '',
-          address: '',
-          email: '', 
-          date: '',
-          message: ''
+          name: "",
+          mobile: "",
+          address: "",
+          email: "",
+          date: "",
+          duration: "",
+          message: "",
         });
         setIsSuccess(false);
         onClose();
       }, 2000);
-      
     } catch (error) {
-      console.error('Booking failed:', error);
-      // You could show an error message here
-      alert('Failed to create booking. Please try again.');
+      console.error("Booking failed:", error);
+      alert("Failed to create booking. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -154,18 +177,21 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
   if (isSuccess) {
     return (
       <>
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           onClick={handleClose}
         />
         <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg shadow-xl z-50 p-6">
           <div className="text-center">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Booking Confirmed!</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              Booking Confirmed!
+            </h2>
             <p className="text-gray-600 mb-4">
-              Your booking for {serviceName} has been successfully submitted. We'll contact you soon to confirm the details.
+              Your booking for {serviceName} has been successfully submitted.
+              We'll contact you soon to confirm the details.
             </p>
-            <button 
+            <button
               onClick={handleClose}
               className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
             >
@@ -201,6 +227,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
         <p className="text-gray-600 mb-6">Booking for: {serviceName}</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
           <div>
             <label
               htmlFor="name"
@@ -223,12 +250,13 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             )}
           </div>
 
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email
+              Email (Optional)
             </label>
             <input
               type="email"
@@ -246,6 +274,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             )}
           </div>
 
+          {/* Mobile */}
           <div>
             <label
               htmlFor="mobile"
@@ -269,6 +298,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             )}
           </div>
 
+          {/* Address */}
           <div>
             <label
               htmlFor="address"
@@ -291,6 +321,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             )}
           </div>
 
+          {/* Date */}
           <div>
             <label
               htmlFor="date"
@@ -309,9 +340,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
                 className={`w-full px-4 py-2 pr-10 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none disabled:opacity-50 ${
                   errors.date ? "border-red-500" : "border-gray-300"
                 }`}
-                style={{
-                  colorScheme: "light",
-                }}
               />
               <Calendar
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -323,6 +351,42 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             )}
           </div>
 
+          {/* Duration */}
+          <div>
+            <label
+              htmlFor="duration"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Duration
+            </label>
+            <div className="relative">
+              <select
+                id="duration"
+                value={formData.duration}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                className={`w-full px-4 py-2 pr-8 border rounded-md focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 ${
+                  errors.duration ? "border-red-500" : "border-gray-300"
+                }`}
+              >
+                <option value="">Select duration</option>
+                <option value="1-2 hours">1-2 Hour</option>
+                <option value="2-3 hours">2-3 Hours</option>
+                <option value="3-4 hours">3-4 Hours</option>
+                <option value="4-5 hours">4-5 Hours</option>
+                <option value="5-6 hours">5-6 Hours</option>
+              </select>
+              <Clock
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                size={18}
+              />
+            </div>
+            {errors.duration && (
+              <p className="mt-1 text-sm text-red-500">{errors.duration}</p>
+            )}
+          </div>
+
+          {/* Message */}
           <div>
             <label
               htmlFor="message"
@@ -340,6 +404,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, serviceNam
             />
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}

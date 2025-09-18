@@ -175,7 +175,6 @@ export default function Header() {
   }
 
   if (isAuthenticated &&  user && user.role === "admin"){
-    console.log(user)
     return <></>;
   }
 

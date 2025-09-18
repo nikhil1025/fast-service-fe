@@ -46,8 +46,9 @@ const StatsSection: React.FC = () => {
             <div className="flex flex-row items-center justify-around gap-6 sm:gap-4">
               <div className="text-center flex-1">
                 <p className="text-3xl sm:text-4xl font-bold text-primary">
-                  {isVisible && <CountUp end={50} suffix="+" duration={2} />}
-                  {!isVisible && "0+"}
+                  {/* {isVisible && <CountUp end={50} suffix="+" duration={2} />}
+                  {!isVisible && "0+"} */}
+                  3,000+
                 </p>
                 <p className="text-gray-600 text-sm mt-1">Services</p>
               </div>
