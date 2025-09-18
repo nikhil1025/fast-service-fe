@@ -229,7 +229,9 @@ export default function Header() {
           {/* Call Button and User Menu (Desktop) */}
           <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={() => (window.location.href = "tel:+971123456789")}
+              onClick={() =>
+                (window.location.href = "tel:" + mainSettings.contactPhone)
+              }
               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition duration-200"
             >
               <Phone size={18} />
