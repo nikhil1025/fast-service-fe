@@ -21,7 +21,7 @@ interface FooterService {
   id: string;
 }
 
-interface MainSettings {
+export interface MainSettings {
   contactPhone: string;
   contactEmail: string;
 }
