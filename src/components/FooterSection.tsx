@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { NEXT_PUBLIC_API_URL } from "@/config";
 
 interface FooterService {
   title: string;
@@ -36,10 +37,7 @@ export default function FooterSection() {
   useEffect(() => {
     const fetchFooterServices = async () => {
       try {
-        const res = await fetch(
-          process.env.NEXT_PUBLIC_API_URL ||
-      "https://api.fastservices4u.com/test/api"
-          // "http://localhost:3001/test/api/settings/footer-services"
+        const res = await fetch(NEXT_PUBLIC_API_URL + "/settings/footer-services"
         );
         if (!res.ok) throw new Error("Failed to fetch footer services");
         const data = await res.json();
@@ -51,11 +49,7 @@ export default function FooterSection() {
 
     const fetchMainSettings = async () => {
       try {
-        const res = await fetch(
-          process.env.NEXT_PUBLIC_API_URL ||
-            "https://api.fastservices4u.com/test/api"
-          // "http://localhost:3001/test/api/settings/main"
-        );
+        const res = await fetch(NEXT_PUBLIC_API_URL + "/settings/main");
         if (!res.ok) throw new Error("Failed to fetch main settings");
         const data = await res.json();
         setMainSettings(data);

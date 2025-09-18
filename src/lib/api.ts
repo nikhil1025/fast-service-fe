@@ -1,6 +1,6 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.fastservices4u.com/test/api";
-// process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/test/api";
+import { NEXT_PUBLIC_API_URL } from "@/config";
+
+const API_BASE_URL = NEXT_PUBLIC_API_URL;
 
 // Types
 export interface User {

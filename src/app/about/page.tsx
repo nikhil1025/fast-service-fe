@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Users, Award, Clock, Shield } from "lucide-react";
 import CallToActionSection from "@/components/CallToActionSection";
+import { NEXT_PUBLIC_API_URL } from "@/config";
 
 interface OurStoryData {
   paragraphs: string[];
@@ -15,9 +16,7 @@ export default function AboutPage() {
     const fetchOurStory = async () => {
       try {
         const res = await fetch(
-          // "http://localhost:3001/test/api/settings/about-us"
-          process.env.NEXT_PUBLIC_API_URL ||
-          "https://api.fastservices4u.com/test/api"
+          NEXT_PUBLIC_API_URL + "/settings/about-us"
         );
         if (!res.ok) throw new Error("Failed to fetch Our Story");
         const data: OurStoryData = await res.json();

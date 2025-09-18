@@ -1,4 +1,5 @@
 "use client";
+import { NEXT_PUBLIC_API_URL } from "@/config";
 import React, { useState, useEffect, useRef } from "react";
 
 export interface Service {
@@ -34,10 +35,7 @@ export default function FooterServicesSection({
     setError(null);
 
     fetch(
-      // "http://localhost:3001/test/api" 
-      process.env.NEXT_PUBLIC_API_URL ||
-      "https://api.fastservices4u.com/test/api"
-      +`/services?search=${encodeURIComponent(
+      `${NEXT_PUBLIC_API_URL}/services?search=${encodeURIComponent(
         query
       )}`
     )

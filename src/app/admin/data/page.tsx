@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Database, Download, Upload, RefreshCw, AlertTriangle } from 'lucide-react'
+import { NEXT_PUBLIC_API_URL } from '@/config'
 
 export default function DataManagementPage() {
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({})
@@ -11,8 +12,7 @@ export default function DataManagementPage() {
     try {
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL ||
-          "http://13.234.217.37:3001/test/api"
+          NEXT_PUBLIC_API_URL
         }/seed/${endpoint}`,
         {
           method: "POST",

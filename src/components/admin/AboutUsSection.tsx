@@ -2,15 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { Save } from "lucide-react";
-
-const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ||
-      "https://api.fastservices4u.com/test/api";
-    //   "http://localhost:3001/test/api";
-
+import { NEXT_PUBLIC_API_URL } from "@/config";
 interface AboutUsData {
   paragraphs: string[];
 }
-
 interface AboutUsSectionProps {
   initialData?: AboutUsData;
   onChange?: (data: AboutUsData) => void;

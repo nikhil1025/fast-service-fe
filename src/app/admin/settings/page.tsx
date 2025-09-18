@@ -4,10 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Save, Bell, Shield, Globe, Palette } from "lucide-react";
 import FooterServicesSection, { Service } from "@/components/admin/FooterService";
 import AboutUsSection from "@/components/admin/AboutUsSection";
-
-const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ||
-      "https://api.fastservices4u.com/test/api" ;
-      // "http://localhost:3001/test/api";
+import { NEXT_PUBLIC_API_URL } from "@/config";
 
 const defaultSettings = {
   siteName: "Fast Services",
